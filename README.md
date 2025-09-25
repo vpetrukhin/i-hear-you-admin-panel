@@ -28,3 +28,9 @@ npm run build
 - [MaterialUI](https://mui.com/material-ui)
 - [Tanstack Query](https://tanstack.com/query/latest)
 - [MSW](https://mswjs.io)
+
+## Для разработки
+
+### Архитектура
+
+Работаем по [FSD](https://feature-sliced.github.io/documentation/)
