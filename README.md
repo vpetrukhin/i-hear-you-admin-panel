@@ -34,3 +34,22 @@ npm run build
 ### Архитектура
 
 Работаем по [FSD](https://feature-sliced.github.io/documentation/)
+
+### Mock Service Worker
+
+В режиме разработки можно замокать ответы бекенда. Для это нужно прописать хендлеры в файле `./src/shared/lib/mocks/handlers.ts`.
+
+```
+import { http, HttpResponse } from 'msw'
+
+export const handlers = [
+  http.get("https://api.example.com/user", () => {
+    return HttpResponse.json({
+      id: "abc-123",
+      firstName: "John",
+      lastName: "Maverick",
+    });
+  }),
+  // Сюда добавляются хендлеры запросов
+];
+```
