@@ -1,13 +1,14 @@
 import { AuthProvider } from "@/features/auth";
-import { LoginPage } from "@/pages/LoginPage";
+import { RouterProvider } from "react-router/dom";
 import { CssBaseline } from "@mui/material";
+import { router } from "./router";
 
 function App() {
   return (
     <AuthProvider>
       <CssBaseline />
 
-      <LoginPage />
+      <RouterProvider router={router} />,
     </AuthProvider>
   );
 }
