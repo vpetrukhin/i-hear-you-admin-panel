@@ -9,21 +9,24 @@ import {
 } from "@mui/material";
 
 interface LoginFormProps {
+  isLoading?: boolean;
   onSubmit: (credentials: { email: string; password: string }) => void;
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
-  const [email, setEmail] = useState("");
+export const LoginForm: React.FC<LoginFormProps> = (
+  { isLoading, onSubmit },
+) => {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (email && password) {
-      onSubmit({ email, password });
+    if (username && password) {
+      onSubmit({ email: username, password });
     }
   };
 
-  const isDisabled = !email || !password;
+  const isDisabled = !username || !password;
 
   return (
     <Paper
@@ -43,10 +46,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
       <Box component="form" onSubmit={handleSubmit} noValidate>
         <Stack spacing={2}>
           <TextField
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            label="Имя пользователя"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
             fullWidth
           />
@@ -61,6 +63,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
           />
 
           <Button
+            loading={isLoading}
             type="submit"
             variant="contained"
             color="primary"
