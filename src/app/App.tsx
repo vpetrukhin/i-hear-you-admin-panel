@@ -1,11 +1,19 @@
-import { Button, CssBaseline } from "@mui/material";
+import { AuthProvider } from "@/features/auth";
+import { RouterProvider } from "react-router/dom";
+import { CssBaseline } from "@mui/material";
+import { router } from "./router";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/shared/api/queryClient";
 
 function App() {
   return (
-    <>
-      <CssBaseline />
-      <Button variant="contained">Hello world</Button>
-    </>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <CssBaseline />
+
+        <RouterProvider router={router} />,
+      </QueryClientProvider>
+    </AuthProvider>
   );
 }
 
