@@ -1,11 +1,14 @@
-import { Button, CssBaseline } from "@mui/material";
+import { AuthProvider } from "@/features/auth";
+import { LoginPage } from "@/pages/LoginPage";
+import { CssBaseline } from "@mui/material";
 
 function App() {
   return (
-    <>
+    <AuthProvider>
       <CssBaseline />
-      <Button variant="contained">Hello world</Button>
-    </>
+
+      <LoginPage />
+    </AuthProvider>
   );
 }
 
