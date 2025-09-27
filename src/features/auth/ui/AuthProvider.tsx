@@ -3,8 +3,7 @@ import { AuthContext, type AuthContextType } from "../model/AuthContext";
 import { type LoginApiDTO } from "../api/authApi";
 import { useLoginMutation } from "../lib/useLoginMutation";
 import { deleteToken, getToken } from "../lib/token";
-import { useNavigate } from "react-router";
-import { LOGIN_PAGE_ROUTE } from "@/pages/LoginPage";
+import { useRefreshMutation } from "../lib/useRefreshMutation";
 
 interface Props {
   children: ReactNode;
@@ -12,6 +11,9 @@ interface Props {
 
 export const AuthProvider = ({ children }: Props) => {
   const loginMutation = useLoginMutation();
+  const refreshMutation = useRefreshMutation();
+
+  // TODO: Запрос за user
 
   const isAuth = Boolean(getToken());
 
@@ -20,7 +22,7 @@ export const AuthProvider = ({ children }: Props) => {
   };
 
   const refresh = async () => {
-    //
+    refreshMutation.mutate();
   };
 
   const logout = async () => {

@@ -18,3 +18,13 @@ export const loginRequest = async (
     }, 2000);
   });
 };
+
+export const refreshRequest = async (): Promise<LoginResponseApiType> => {
+  return new Promise((res) => {
+    setTimeout(() => {
+      res({
+        access: "token",
+      });
+    }, 2000);
+  });
+};

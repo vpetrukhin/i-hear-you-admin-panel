@@ -1,6 +1,6 @@
 import { Navigate } from "react-router";
 import { LOGIN_PAGE_ROUTE } from "@/pages/LoginPage";
-import { type ReactNode, useEffect } from "react";
+import { type ReactNode } from "react";
 import { useAuthContext } from "@/features/auth";
 
 interface Props {

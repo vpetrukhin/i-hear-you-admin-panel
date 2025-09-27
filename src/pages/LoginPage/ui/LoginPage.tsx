@@ -12,8 +12,6 @@ export const LoginPage = () => {
   ) => {
     await loginMutation.mutateAsync(credentials);
 
-    console.log("navigate");
-
     navigate("/");
   };
 
