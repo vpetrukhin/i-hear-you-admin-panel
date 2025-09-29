@@ -1,10 +1,12 @@
 import { Page } from "@/widgets/Page";
-import { Typography } from "@mui/material";
+import { PageContent } from "@/widgets/PageContent";
+import { Sidebar } from "@/widgets/Sidebar";
 
 export const MaterialListPage = () => {
   return (
     <Page>
-      <Typography variant="h5">Страница списка материалов</Typography>
+      <Sidebar />
+      <PageContent children={'Страница с материалами, потом тут будет компонент со списком'} />
     </Page>
   );
 };

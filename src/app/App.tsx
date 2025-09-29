@@ -11,7 +11,7 @@ function App() {
       <AuthProvider>
         <CssBaseline />
 
-        <RouterProvider router={router} />,
+        <RouterProvider router={router} />
       </AuthProvider>
     </QueryClientProvider>
   );
