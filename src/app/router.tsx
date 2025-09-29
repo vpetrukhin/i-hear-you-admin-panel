@@ -6,6 +6,7 @@ import {
 import { MATERIAL_PAGE_ROUTE, MaterialPage } from "@/pages/MaterialPage";
 import { MATERIAL_CREATE_PAGE_ROUTE, MaterialCreatePage } from '@/pages/MaterialCreatePage';
 import { createBrowserRouter, Navigate } from "react-router";
+import { ProtectedRoute } from "./ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
@@ -14,7 +15,11 @@ export const router = createBrowserRouter([
   },
   {
     path: MATERIAL_LIST_PAGE_ROUTE,
-    element: <MaterialListPage />,
+    element: (
+      <ProtectedRoute>
+        <MaterialListPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: MATERIAL_CREATE_PAGE_ROUTE,

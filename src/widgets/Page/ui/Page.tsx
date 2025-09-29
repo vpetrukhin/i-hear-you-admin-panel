@@ -1,4 +1,5 @@
 import { useAuthContext } from "@/features/auth";
+import { LOGIN_PAGE_ROUTE } from "@/pages/LoginPage";
 import { Link } from "@/shared/ui/Link";
 import {
   AppBar,
@@ -9,16 +10,19 @@ import {
   Typography,
 } from "@mui/material";
 import type { ReactNode } from "react";
+import { useNavigate } from "react-router";
 
 interface Props {
   children: ReactNode;
 }
 
 export const Page = ({ children }: Props) => {
-  const { user } = useAuthContext();
+  const navigate = useNavigate();
+  const { user, logout } = useAuthContext();
 
   const handleLogout = () => {
-    console.log("logout");
+    logout();
+    navigate(LOGIN_PAGE_ROUTE);
   };
 
   return (

@@ -10,4 +10,13 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://ihearyou.sytes.net",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 });

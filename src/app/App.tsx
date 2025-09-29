@@ -7,13 +7,13 @@ import { queryClient } from "@/shared/api/queryClient";
 
 function App() {
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
         <CssBaseline />
 
         <RouterProvider router={router} />,
-      </QueryClientProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 

@@ -245,7 +245,7 @@ export const MaterialCreateForm: React.FC<MaterialCreateFormProps> = ({
                     <Stack spacing={3}>
                         {/* ===== Привязка к разделам ===== */}
                         <Typography variant="subtitle1" fontWeight={600}>
-                            Привязка к разделам
+                            Выберите раздел
                         </Typography>
 
                         <Controller

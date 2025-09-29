@@ -2,6 +2,7 @@ import { Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { MaterialCreateForm } from "@/features/material/create/ui/MaterialCreateForm";
 import { createContent, linkContentCategories } from "@/shared/api/content";
+import { Page } from "@/widgets/Page";
 
 const categories = [
     // 1. О проекте (себе+ребенок)
@@ -126,13 +127,15 @@ export const MaterialCreatePage = () => {
     };
 
     return (
-        <Container maxWidth="md" sx={{ py: 3 }}>
-            <MaterialCreateForm
-                categories={categories}
-                isLoading={false}
-                errors={undefined}
-                onSubmit={handleCreate}
-            />
-        </Container>
+        <Page>
+            <Container maxWidth="md" sx={{ py: 3 }}>
+                <MaterialCreateForm
+                    categories={categories}
+                    isLoading={false}
+                    errors={undefined}
+                    onSubmit={handleCreate}
+                />
+            </Container>
+        </Page>
     );
 };
