@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Alert,
   Box,
   Button,
   Paper,
@@ -8,25 +9,32 @@ import {
   Typography,
 } from "@mui/material";
 
+interface LoginFormErrors {
+  email?: string;
+  password?: string;
+  common?: string;
+}
+
 interface LoginFormProps {
   isLoading?: boolean;
+  errors?: LoginFormErrors;
   onSubmit: (credentials: { email: string; password: string }) => void;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = (
-  { isLoading, onSubmit },
+  { isLoading, errors, onSubmit },
 ) => {
-  const [username, setUsername] = useState("");
+  const [email, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (username && password) {
-      onSubmit({ email: username, password });
+    if (email && password) {
+      onSubmit({ email: email, password });
     }
   };
 
-  const isDisabled = !username || !password;
+  const isDisabled = !email || !password;
 
   return (
     <Paper
@@ -43,14 +51,20 @@ export const LoginForm: React.FC<LoginFormProps> = (
         Вход в систему
       </Typography>
 
+      {errors?.common && (
+        <Alert sx={{ marginBottom: 3 }} severity="error">{errors.common}</Alert>
+      )}
+
       <Box component="form" onSubmit={handleSubmit} noValidate>
         <Stack spacing={2}>
           <TextField
-            label="Имя пользователя"
-            value={username}
+            label="Email"
+            value={email}
             onChange={(e) => setUsername(e.target.value)}
             required
             fullWidth
+            error={!!errors?.email}
+            helperText={errors?.email}
           />
 
           <TextField
@@ -60,6 +74,8 @@ export const LoginForm: React.FC<LoginFormProps> = (
             onChange={(e) => setPassword(e.target.value)}
             required
             fullWidth
+            error={!!errors?.password}
+            helperText={errors?.password}
           />
 
           <Button

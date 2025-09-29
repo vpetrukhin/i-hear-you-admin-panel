@@ -30,7 +30,15 @@ export const LoginPage = () => {
         Я тебя слышу
       </Box>
 
-      <LoginForm isLoading={loginMutation.isPending} onSubmit={handleLogin} />
+      <LoginForm
+        isLoading={loginMutation.isPending}
+        errors={loginMutation.isError
+          ? {
+            common: loginMutation.error.response?.data.detail,
+          }
+          : undefined}
+        onSubmit={handleLogin}
+      />
     </Container>
   );
 };
