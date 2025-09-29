@@ -1,10 +1,18 @@
 import { LoginForm } from "@/features/auth";
+import { useLoginMutation } from "@/features/auth/lib/useLoginMutation";
 import { Box, Container } from "@mui/material";
+import { useNavigate } from "react-router";
 
 export const LoginPage = () => {
-  const handleLogin = (credentials: { email: string; password: string }) => {
-    console.log("Авторизация:", credentials);
-    // Здесь можно вызвать API или перейти на другую страницу
+  const loginMutation = useLoginMutation();
+  const navigate = useNavigate();
+
+  const handleLogin = async (
+    credentials: { email: string; password: string },
+  ) => {
+    await loginMutation.mutateAsync(credentials);
+
+    navigate("/");
   };
 
   return (
@@ -22,7 +30,15 @@ export const LoginPage = () => {
         Я тебя слышу
       </Box>
 
-      <LoginForm onSubmit={handleLogin} />
+      <LoginForm
+        isLoading={loginMutation.isPending}
+        errors={loginMutation.isError
+          ? {
+            common: loginMutation.error.response?.data.detail,
+          }
+          : undefined}
+        onSubmit={handleLogin}
+      />
     </Container>
   );
 };
