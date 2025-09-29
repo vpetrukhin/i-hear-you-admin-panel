@@ -25,5 +25,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/my-frontend:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/my-frontend:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/i-hear-you-admin-panel:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/i-hear-you-admin-panel:${{ github.sha }}
