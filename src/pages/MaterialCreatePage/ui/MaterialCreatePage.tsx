@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { MaterialCreateForm } from "@/features/material/create/ui/MaterialCreateForm";
 import { createContent, linkContentCategories } from "@/shared/api/content";
 import { Page } from "@/widgets/Page";
+import {Sidebar} from "@/widgets/Sidebar";
+import { PageContent } from "@/widgets/PageContent";
 
 const categories = [
     // 1. О проекте (себе+ребенок)
@@ -128,14 +130,15 @@ export const MaterialCreatePage = () => {
 
     return (
         <Page>
-            <Container maxWidth="md" sx={{ py: 3 }}>
+            <Sidebar />
+            <PageContent>
                 <MaterialCreateForm
                     categories={categories}
                     isLoading={false}
                     errors={undefined}
                     onSubmit={handleCreate}
                 />
-            </Container>
+            </PageContent>
         </Page>
     );
 };
