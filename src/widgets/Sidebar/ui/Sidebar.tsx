@@ -1,6 +1,6 @@
 import { useAuthContext } from "@/features/auth";
 import { LOGIN_PAGE_ROUTE } from "@/pages/LoginPage";
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import SettingsIcon from "@mui/icons-material/Settings";
 import UploadIcon from "@mui/icons-material/Upload";
@@ -16,37 +16,65 @@ export const Sidebar = () => {
     logout();
     navigate(LOGIN_PAGE_ROUTE);
   };
-
+ 
   return (
     <Box
       sx={{
-        width: "25%",
+        width: "28%",
         minWidth: 200,
         bgcolor: "#FAF9FD",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        pt: "80px",
-        pb: "20px",
+        py: "20px",
       }}
     >
-      <Stack
+      <Box
         sx={{
           display: "flex",
           flexDirection: "column",
-          px: "8px",
         }}
       >
-        <SidebarLink to="/home" Icon={HomeIcon}>
-          Главная
-        </SidebarLink>
-        <SidebarLink to="/scenarios" Icon={SettingsIcon}>
-          Настройка сценариев
-        </SidebarLink>
-        <SidebarLink to="/materials" Icon={UploadIcon}>
-          Управление контентом
-        </SidebarLink>
-      </Stack>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            px: "20px",
+            pt: "20px",
+            pb: "56px",
+            color: "#2B2735",
+          }}
+        >
+          <Typography
+            sx={{ fontSize: "20px", lineHeight: "120%", fontWeight: "800" }}
+          >
+            Я ТЕБЯ СЛЫШУ
+          </Typography>
+          <Typography
+            sx={{ fontSize: "16px", lineHeight: "100%", fontWeight: "300" }}
+          >
+            админ панель
+          </Typography>
+        </Box>
+
+        <Stack
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            px: "12px",
+          }}
+        >
+          <SidebarLink to="/home" Icon={HomeIcon}>
+            Главная
+          </SidebarLink>
+          <SidebarLink to="/scenarios" Icon={SettingsIcon}>
+            Настройка сценариев
+          </SidebarLink>
+          <SidebarLink to="/materials" Icon={UploadIcon}>
+            Управление контентом
+          </SidebarLink>
+        </Stack>
+      </Box>
 
       <Button
         onClick={handleLogout}
@@ -57,7 +85,7 @@ export const Sidebar = () => {
           alignItems: "center",
           justifyContent: " flex-start",
           gap: "12px",
-          color: "#686868",
+          color: "#737476",
         }}
       >
         <LogoutIcon sx={{ width: "24px", height: "24px" }} />
@@ -67,7 +95,7 @@ export const Sidebar = () => {
             fontSize: "16px",
             loneHeight: "140%",
             fontWeight: "600",
-            textTransform: "none",
+            textTransform: "uppercase",
           }}
         >
           Выход из профиля

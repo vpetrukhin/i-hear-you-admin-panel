@@ -4,16 +4,19 @@ import { CssBaseline } from "@mui/material";
 import { router } from "./router";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/shared/api/queryClient";
+ import { ThemeProvider } from '@mui/material/styles';
+import { theme } from "./theme";
 
 function App() {
   return (
+    <ThemeProvider theme={theme}>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <CssBaseline />
-
         <RouterProvider router={router} />
       </AuthProvider>
     </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 
