@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import {
     Autocomplete,
     Box,
@@ -14,24 +13,22 @@ import {
     FormGroup,
     FormHelperText,
     FormLabel,
-    InputLabel,
-    MenuItem,
-    Radio,
-    RadioGroup,
-    Select,
-    Stack,
-    Switch,
     TextField,
     Typography,
     Alert,
+    Paper,
+    Checkbox,
+    Grid,
+    InputLabel,
+    Select,
+    MenuItem,
+    Stack,
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { uploadFile } from "@/shared/api/files";
 
-type ContentType = "text" | "photo" | "video" | "pdf";
 type UserGroup = "self" | "child";
-
 type CategoryOption = {
     id: string;
     title: string;
@@ -43,24 +40,21 @@ interface MaterialCreateFormProps {
     categories: CategoryOption[];
     isLoading?: boolean;
     errors?: { common?: string };
-    onSubmit: (
-        payload: any,
-        categoryIds: string[],
-    ) => Promise<{ id: string }>;
+    onSubmit: (payload: any, categoryIds: string[]) => Promise<{ id: string }>;
+    initialFile?: File;
+    onCancel?: () => void;
 }
 
 interface FormValues {
-    type: ContentType;
     title: string;
     description: string;
-    body?: string;       // type=text
-    media_id?: string;   // photo/pdf/video
-    media_url?: string;  // photo/pdf
-    video_url?: string;  // video
+    media_id?: string;
+    media_url?: string;
     is_active: boolean;
     subscription_type: "all" | "premium";
     user_groups: UserGroup[];
     category_ids: string[];
+    topic?: string;
 }
 
 export const MaterialCreateForm: React.FC<MaterialCreateFormProps> = ({
@@ -68,9 +62,9 @@ export const MaterialCreateForm: React.FC<MaterialCreateFormProps> = ({
                                                                           isLoading,
                                                                           errors,
                                                                           onSubmit,
+                                                                          initialFile,
+                                                                          onCancel,
                                                                       }) => {
-    const navigate = useNavigate();
-
     const {
         control,
         handleSubmit,
@@ -78,56 +72,47 @@ export const MaterialCreateForm: React.FC<MaterialCreateFormProps> = ({
         setError,
         clearErrors,
         setValue,
-        formState: { errors: formErrors, isDirty },
+        formState: { errors: formErrors },
     } = useForm<FormValues>({
         defaultValues: {
-            type: "text",
             title: "",
             description: "",
-            body: "",
             media_id: "",
             media_url: "",
-            video_url: "",
             is_active: true,
             subscription_type: "all",
-            user_groups: ["self"],
+            user_groups: [],
             category_ids: [],
+            topic: "",
         },
     });
 
-    const type = watch("type");
-    const selectedGroups = watch("user_groups");
-    const selectedCategoryIds = watch("category_ids");
-
-    // ===== загрузка файла (mock) =====
     const uploadMutation = useMutation({
         mutationFn: async (p: { file: File; kind: "photo" | "video" | "pdf" }) =>
             uploadFile(p.file, p.kind),
         onSuccess: (res) => {
-            if (type === "video") {
-                setValue("media_id", res.file_id ?? "", { shouldDirty: true });
-                setValue("video_url", res.url ?? "", { shouldDirty: true });
-            } else if (type === "photo" || type === "pdf") {
-                setValue("media_id", res.file_id ?? "", { shouldDirty: true });
-                setValue("media_url", res.url ?? "", { shouldDirty: true });
-            }
+            setValue("media_id", res.file_id ?? "", { shouldDirty: true });
+            setValue("media_url", res.url ?? "", { shouldDirty: true });
         },
     });
 
-    const handleChooseFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        const kind = type === "photo" ? "photo" : type === "pdf" ? "pdf" : "video";
-        uploadMutation.mutate({ file, kind });
-        e.currentTarget.value = "";
-    };
+    useEffect(() => {
+        if (!initialFile) return;
+        const kind: "photo" | "video" | "pdf" = initialFile.type.startsWith("image/")
+            ? "photo"
+            : initialFile.type === "application/pdf"
+                ? "pdf"
+                : "video";
+        uploadMutation.mutate({ file: initialFile, kind });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [initialFile]);
 
-    // Фильтрация категорий по выбранным группам пользователей
+    const selectedGroups = watch("user_groups");
+    const selectedCategoryIds = watch("category_ids");
+
     const filteredCategories = useMemo(() => {
-        if (!selectedGroups?.length) return [];
-        return categories.filter((c) =>
-            selectedGroups.every((g) => c.groups.includes(g)),
-        );
+        if (!selectedGroups?.length) return categories;
+        return categories.filter((c) => selectedGroups.every((g) => c.groups.includes(g)));
     }, [categories, selectedGroups]);
 
     useEffect(() => {
@@ -139,178 +124,151 @@ export const MaterialCreateForm: React.FC<MaterialCreateFormProps> = ({
     }, [filteredCategories, selectedCategoryIds, setValue]);
 
     function buildPayload(v: FormValues) {
-        const base: any = {
-            type: v.type,
+        return {
+            type: "document",
             title: v.title,
             description: v.description || undefined,
             is_active: v.is_active,
             subscription_type: v.subscription_type,
             user_groups: v.user_groups,
-        };
-        if (v.type === "text") return { ...base, body: v.body };
-        if (v.type === "video")
-            return {
-                ...base,
-                media_id: v.media_id || undefined,
-                video_url: v.video_url || undefined,
-            };
-
-        return {
-            ...base,
             media_id: v.media_id || undefined,
             media_url: v.media_url || undefined,
+            topic: v.topic || undefined,
         };
     }
 
     const submit = async (v: FormValues) => {
-        clearErrors([
-            "title",
-            "body",
-            "media_id",
-            "media_url",
-            "video_url",
-            "category_ids",
-        ] as any);
-
+        clearErrors(["title", "category_ids"] as any);
         let hasError = false;
 
         if (!v.title.trim()) {
-            setError("title", { type: "manual", message: "Укажите заголовок" });
+            setError("title", { type: "manual", message: "Укажите название файла" });
             hasError = true;
         }
-
-        if (v.type === "text" && !v.body?.trim()) {
-            setError("body" as any, {
-                type: "manual",
-                message: "Добавьте текст материала",
-            });
-            hasError = true;
-        }
-
-        if (v.type === "video") {
-            const hasMediaId = Boolean(v.media_id && v.media_id.trim());
-            const hasVideoUrl = Boolean(v.video_url && v.video_url.trim());
-            if (!hasMediaId && !hasVideoUrl) {
-                setError("video_url" as any, {
-                    type: "manual",
-                    message: "Добавьте ID видео или ссылку",
-                });
-                hasError = true;
-            }
-        }
-
-        if (v.type === "photo" || v.type === "pdf") {
-            const hasMediaId = Boolean(v.media_id && v.media_id.trim());
-            const hasMediaUrl = Boolean(v.media_url && v.media_url.trim());
-            if (!hasMediaId && !hasMediaUrl) {
-                setError("media_url" as any, {
-                    type: "manual",
-                    message: "Добавьте ID медиа или URL",
-                });
-                hasError = true;
-            }
-        }
-
         if (!v.category_ids.length) {
-            setError("category_ids" as any, {
+            setError("category_ids" as any, { type: "manual", message: "Выберите категорию" });
+            hasError = true;
+        }
+        if (!v.user_groups.length) {
+            setError("user_groups" as any, {
                 type: "manual",
-                message: "Привяжите материал к разделу/подразделу",
+                message: "Выберите хотя бы один вариант",
             });
             hasError = true;
         }
-
         if (hasError) return;
 
         const payload = buildPayload(v);
-        const { id } = await onSubmit(payload, v.category_ids);
-        if (id) navigate(`/materials/${id}`);
+        await onSubmit(payload, v.category_ids);
     };
 
     return (
-        <Card variant="outlined" sx={{ borderColor: "divider" }}>
-            <CardHeader
-                title="Новый материал"
-                subheader="Сначала выберите разделы, затем заполните карточку материала"
-                sx={{ pb: 0.5 }}
-            />
-            <Divider />
-            <CardContent sx={{ pt: 3 }}>
+
+        <Card
+            variant="outlined"
+            sx={{
+                border: 'none',
+                gap: "20px",
+                "& .MuiInputLabel-root": {
+                    fontWeight: 300,
+                    fontSize: "13px",
+                    lineHeight: "140%",
+                    letterSpacing: 0,
+                },
+                "& .MuiCardContent-root:last-child": {
+                    pb: 0,
+                },
+                "& .MuiStack-root>:not(style):not(style)": {
+                    mt: "20px"
+                },
+                }}
+        >
+            <CardContent
+                sx={{
+                    p: 0,
+                }}
+            >
                 {errors?.common && (
                     <Alert sx={{ mb: 2 }} severity="error">
                         {errors.common}
                     </Alert>
                 )}
 
-                <Box component="form" onSubmit={handleSubmit(submit)} noValidate>
-                    <Stack spacing={3}>
-                        {/* ===== Привязка к разделам ===== */}
-                        <Typography variant="subtitle1" fontWeight={600}>
-                            Выберите раздел
+                {/*{(initialFile || uploadMutation.isSuccess) && (*/}
+                    <Paper
+                        variant="outlined"
+                        sx={{
+                            height: "70px",
+                            bgcolor: "#FAF9FD",
+                            border: "none",
+                            borderRadius: "12px",
+                            p: "16px",
+                            gap: "16px",
+                            mb: "20px",
+                            fontSize: "13px",
+                            fontWeight: 300,
+                    }}
+                    >
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                fontWeight: 500,
+                                color: "#000",
+                                size: "14px",
+                                lineHeight: "140%",
+                                letterSpacing: 0,
+                                }}
+                            >
+                            {/* Изменить в будущем на получение имени */}
+                            {initialFile ? initialFile.name : "document_file_name.pdf"}
                         </Typography>
-
-                        <Controller
-                            name="category_ids"
-                            control={control}
-                            render={({ field }) => (
-                                <Autocomplete
-                                    multiple
-                                    options={filteredCategories}
-                                    value={filteredCategories.filter((o) =>
-                                        field.value?.includes(o.id),
-                                    )}
-                                    getOptionLabel={(o) =>
-                                        o.path ? `${o.path.join(" / ")} / ${o.title}` : o.title
-                                    }
-                                    onChange={(_e, val) => field.onChange(val.map((v) => v.id))}
-                                    renderTags={(value, getTagProps) =>
-                                        value.map((option, index) => {
-                                            const { key, ...tagProps } = getTagProps({ index });
-                                            return (
-                                                <Chip
-                                                    {...tagProps}
-                                                    key={option.id ?? key}
-                                                    variant="outlined"
-                                                    label={option.title}
-                                                />
-                                            );
-                                        })
-                                    }
-                                    renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            label="Разделы/подразделы"
-                                            placeholder={
-                                                filteredCategories.length
-                                                    ? "Начните вводить название…"
-                                                    : "Сначала выберите группы пользователей ниже"
-                                            }
-                                            error={!!(formErrors as any).category_ids}
-                                            helperText={(formErrors as any).category_ids?.message}
-                                        />
-                                    )}
-                                />
-                            )}
-                        />
-
-                        <Divider />
-
-                        {/* ===== Основное ===== */}
-                        <Typography variant="subtitle1" fontWeight={600}>
-                            Основное
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                gap: "8px",
+                                color: "rgba(0, 0, 0, 0.6)",
+                                lineHeight: "140%",
+                                letterSpacing: 0,
+                                fontSize: "13px",
+                                fontWeight: 300,
+                            }}
+                        >
+                            {initialFile ? `${Math.round(initialFile.size / 1024)} Кб` : "100кб"} • Загрузка завершена
                         </Typography>
+                    </Paper>
+                {/*)}*/}
 
+                <Box component="form" onSubmit={handleSubmit(submit)} noValidate sx={{ p: 0}}>
+                    <Stack spacing={3} sx={{ p: 0}}>
                         <Controller
                             name="title"
                             control={control}
                             render={({ field }) => (
+
                                 <TextField
+                                    variant="standard"
                                     {...field}
                                     value={field.value ?? ""}
-                                    label="Заголовок"
-                                    required
+                                    label="Название файла"
                                     fullWidth
                                     error={!!formErrors.title}
                                     helperText={(formErrors as any).title?.message}
+                                    InputLabelProps={{ shrink: true }}
+                                    sx={{
+                                        gap: "6px",
+                                        height: "54px",
+                                        fontSize: "14px",
+                                        fontWeight: "500",
+                                        lineHeight: "140%",
+                                        letterSpacing: 0,
+                                        "& .MuiInputLabel-root.Mui-focused": {
+                                            color: "rgba(0, 0, 0, 0.6)",
+
+                                        },
+                                        "& .MuiInputBase-root:after": {
+                                            borderBottomColor: "#7751FF",
+                                        },
+                                    }}
                                 />
                             )}
                         />
@@ -320,250 +278,193 @@ export const MaterialCreateForm: React.FC<MaterialCreateFormProps> = ({
                             control={control}
                             render={({ field }) => (
                                 <TextField
+                                    variant="standard"
                                     {...field}
                                     value={field.value ?? ""}
-                                    label="Краткое описание"
+                                    label="Описание (необязательно)"
                                     fullWidth
                                     multiline
-                                    minRows={3}
-                                    inputProps={{ maxLength: 2000 }}
                                     error={!!formErrors.description}
-                                    helperText={
-                                        (formErrors as any).description?.message ?? "До 2000 символов"
-                                    }
+                                    InputLabelProps={{ shrink: true }}
+                                    sx={{
+                                        gap: "6px",
+                                        height: "54px",
+                                        fontSize: "14px",
+                                        fontWeight: "500",
+                                        lineHeight: "140%",
+                                        letterSpacing: 0,
+                                        "& .MuiInputLabel-root.Mui-focused": {
+                                            color: "#686868",
+                                        },
+                                        "& .MuiInputBase-root:after": {
+                                            borderBottomColor: "#7751FF",
+                                        },
+                                    }}
                                 />
                             )}
                         />
 
-                        <Divider />
+                        <Grid container spacing={3}>
+                            <Grid item xs={12} md={6} size={6}>
+                                <Controller
+                                    name="category_ids"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormControl
+                                            variant="standard"
+                                            fullWidth
+                                            error={!!(formErrors as any).category_ids}
+                                            sx={{
+                                                "& .MuiInputLabel-root.Mui-focused": {
+                                                    color: "#7751FF",
+                                                },
+                                                "& .MuiInputBase-root:after": {
+                                                    borderBottomColor: "#7751FF",
+                                                },
+                                                "& .MuiInputLabel-root.Mui-error": {
+                                                    color: "grey.700",
+                                                },
+                                            }}
+                                        >
+                                            <InputLabel id="topic-label" variant="standard">Категория</InputLabel>
+                                            <Select
+                                                {...field}
+                                                variant="standard"
+                                                labelId="category-label"
+                                                value={field.value || []}
+                                                onChange={(e) => field.onChange(e.target.value)}
+                                            >
+                                                {filteredCategories.map((option) => (
+                                                    <MenuItem key={option.id} value={option.id}>
+                                                        {option.path ? `${option.path.join(" / ")} / ${option.title}` : option.title}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                            <FormHelperText>
+                                                {(formErrors as any).category_ids?.message}
+                                            </FormHelperText>
+                                        </FormControl>
+                                    )}
+                                />
+                            </Grid>
 
-                        {/* ===== Содержимое ===== */}
-                        <Typography variant="subtitle1" fontWeight={600}>
-                            Содержимое
-                        </Typography>
+                            <Grid item xs={12} md={6} size={6}>
+                                <Controller
+                                    name="topic"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormControl
+                                            variant="standard"
+                                            fullWidth
+                                            sx={{
+                                                "& .MuiInputLabel-root.Mui-focused": {
+                                                    color: "#7751FF",
+                                                },
+                                                "& .MuiInputBase-root:after": {
+                                                    borderBottomColor: "#7751FF",
+                                                },
+                                            }}
+                                        >
+                                            <InputLabel id="topic-label" variant="standard">Тема (необязательно)</InputLabel>
+                                            <Select
+                                                variant="standard"
+                                                {...field}
+                                                labelId="topic-label"
+                                                value={field.value ?? ""}
+                                                onChange={(e) => field.onChange(e.target.value)}
+                                            >
+                                                <MenuItem value="theme1">Тема 1</MenuItem>
+                                                <MenuItem value="theme2">Тема 2</MenuItem>
+                                                <MenuItem value="theme3">Тема 3</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    )}
+                                />
+                            </Grid>
+                        </Grid>
 
-                        <Controller
-                            name="type"
-                            control={control}
-                            render={({ field }) => (
-                                <FormControl fullWidth>
-                                    <InputLabel id="type-label">Тип материала</InputLabel>
-                                    <Select labelId="type-label" label="Тип материала" {...field}>
-                                        <MenuItem value="text">Текст</MenuItem>
-                                        <MenuItem value="photo">Фото</MenuItem>
-                                        <MenuItem value="video">Видео</MenuItem>
-                                        <MenuItem value="pdf">PDF</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            )}
-                        />
+                        <FormControl component="fieldset">
+                            <FormLabel
+                                component="legend"
+                                sx={{
+                                    color: formErrors.user_groups ? "red" : "black",
+                                    "&.Mui-focused": {
+                                        color: formErrors.user_groups ? "red" : "black",
+                                    },
+                                }}
+                            >
+                                Контекст
+                            </FormLabel>
 
-                        {type === "text" && (
                             <Controller
-                                name="body"
+                                name="user_groups"
                                 control={control}
                                 render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        value={field.value ?? ""}
-                                        label="Текст материала"
-                                        fullWidth
-                                        multiline
-                                        minRows={6}
-                                        error={!!(formErrors as any).body}
-                                        helperText={(formErrors as any).body?.message}
-                                    />
-                                )}
-                            />
-                        )}
-
-                        {type !== "text" && (
-                            <Stack spacing={2}>
-                                <Box>
-                                    <Button
-                                        variant="outlined"
-                                        component="label"
-                                        disabled={uploadMutation.isPending}
-                                    >
-                                        {uploadMutation.isPending ? "Загружаем…" : "Загрузить файл"}
-                                        <input
-                                            hidden
-                                            type="file"
-                                            onChange={handleChooseFile}
-                                            accept={
-                                                type === "photo"
-                                                    ? "image/*"
-                                                    : type === "pdf"
-                                                        ? "application/pdf"
-                                                        : "video/*"
-                                            }
-                                        />
-                                    </Button>
-                                    {uploadMutation.isError && (
-                                        <FormHelperText error sx={{ ml: 2, display: "inline" }}>
-                                            {(uploadMutation.error as Error).message || "Ошибка загрузки"}
-                                        </FormHelperText>
-                                    )}
-                                </Box>
-
-                                {type === "video" ? (
-                                    <>
-                                        <Controller
-                                            name="media_id"
-                                            control={control}
-                                            render={({ field }) => (
-                                                <TextField
-                                                    {...field}
-                                                    value={field.value ?? ""}
-                                                    label="ID загруженного видео (опц.)"
-                                                    fullWidth
-                                                    error={!!(formErrors as any).media_id}
-                                                    helperText={(formErrors as any).media_id?.message}
-                                                />
-                                            )}
-                                        />
-                                        <Controller
-                                            name="video_url"
-                                            control={control}
-                                            render={({ field }) => (
-                                                <TextField
-                                                    {...field}
-                                                    value={field.value ?? ""}
-                                                    label="Ссылка на видео (YouTube/VK)"
-                                                    placeholder="https://..."
-                                                    fullWidth
-                                                    error={!!(formErrors as any).video_url}
-                                                    helperText={(formErrors as any).video_url?.message}
-                                                />
-                                            )}
-                                        />
-                                    </>
-                                ) : (
-                                    <>
-                                        <Controller
-                                            name="media_id"
-                                            control={control}
-                                            render={({ field }) => (
-                                                <TextField
-                                                    {...field}
-                                                    value={field.value ?? ""}
-                                                    label="ID медиа (опц.)"
-                                                    fullWidth
-                                                    error={!!(formErrors as any).media_id}
-                                                    helperText={(formErrors as any).media_id?.message}
-                                                />
-                                            )}
-                                        />
-                                        <Controller
-                                            name="media_url"
-                                            control={control}
-                                            render={({ field }) => (
-                                                <TextField
-                                                    {...field}
-                                                    value={field.value ?? ""}
-                                                    label="URL медиа (опц.)"
-                                                    placeholder="https://..."
-                                                    fullWidth
-                                                    error={!!(formErrors as any).media_url}
-                                                    helperText={(formErrors as any).media_url?.message}
-                                                />
-                                            )}
-                                        />
-                                    </>
-                                )}
-                            </Stack>
-                        )}
-
-                        <Divider />
-
-                        {/* ===== Доступ и аудитории ===== */}
-                        <Typography variant="subtitle1" fontWeight={600}>
-                            Доступ и аудитории
-                        </Typography>
-
-                        <Controller
-                            name="subscription_type"
-                            control={control}
-                            render={({ field }) => (
-                                <FormControl component="fieldset">
-                                    <FormLabel component="legend">Доступ</FormLabel>
-                                    <RadioGroup row {...field}>
-                                        <FormControlLabel
-                                            value="all"
-                                            control={<Radio />}
-                                            label="Для всех"
-                                        />
-                                        <FormControlLabel
-                                            value="premium"
-                                            control={<Radio />}
-                                            label="Премиум"
-                                        />
-                                    </RadioGroup>
-                                </FormControl>
-                            )}
-                        />
-
-                        <Controller
-                            name="user_groups"
-                            control={control}
-                            render={({ field }) => (
-                                <FormControl component="fieldset">
-                                    <FormLabel component="legend">Группы пользователей</FormLabel>
-                                    <FormGroup row>
+                                    <FormGroup>
                                         {(["self", "child"] as UserGroup[]).map((val) => (
                                             <FormControlLabel
                                                 key={val}
                                                 control={
-                                                    <Switch
+                                                    <Checkbox
                                                         checked={field.value?.includes(val)}
                                                         onChange={(e) => {
                                                             const next = new Set<string>(field.value || []);
                                                             e.target.checked ? next.add(val) : next.delete(val);
                                                             field.onChange(Array.from(next));
                                                         }}
+                                                        sx={{
+                                                            color: "#686868",
+                                                            "&.Mui-checked": {
+                                                                color: "#686868",
+                                                            },
+                                                        }}
                                                     />
                                                 }
-                                                label={val === "self" ? "Для себя" : "Для ребёнка"}
+                                                label={
+                                                    val === "self"
+                                                        ? "Я волнуюсь о своём слухе"
+                                                        : "Я волнуюсь о слухе ребёнка"
+                                                }
                                             />
                                         ))}
                                     </FormGroup>
-                                    <FormHelperText />
-                                </FormControl>
-                            )}
-                        />
+                                )}
+                            />
 
-                        <Controller
-                            name="is_active"
-                            control={control}
-                            render={({ field }) => (
-                                <FormControlLabel
-                                    control={<Switch {...field} checked={field.value} />}
-                                    label="Опубликовать"
-                                />
-                            )}
-                        />
+                            <FormHelperText sx={{ color: "text.secondary" }}>
+                                {formErrors.user_groups?.message ??
+                                    "Выберите один или оба варианта"}
+                            </FormHelperText>
+                        </FormControl>
 
-                        {/* ===== Действия ===== */}
-                        <Stack direction="row" spacing={2} sx={{ pt: 1 }}>
-                            <Button type="submit" variant="contained" disabled={isLoading}>
-                                {isLoading ? "Сохраняем…" : "Создать материал"}
-                            </Button>
+                        <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ pt: 0 }}>
                             <Button
                                 type="button"
-                                variant="outlined"
-                                color="primary"
-                                onClick={() => {
-                                    if (!isDirty) {
-                                        navigate("/materials");
-                                        return;
-                                    }
-                                    const ok = window.confirm(
-                                        "Изменения не сохранены. Выйти без сохранения?",
-                                    );
-                                    if (ok) navigate("/materials");
+                                variant="text"
+                                onClick={onCancel}
+                                sx={{
+                                    textTransform: "uppercase",
+                                    color: "#2B2735",
+                                    fontWeight: "600",
+                                    fontSize: "16px",
+                                    lineHeight: "140%",
                                 }}
                             >
                                 Отмена
+                            </Button>
+                            <Button
+                                type="submit"
+                                variant="text"
+                                disabled={isLoading}
+                                sx={{
+                                    textTransform: "uppercase",
+                                    color: "#5D51FF",
+                                    fontWeight: "600",
+                                    fontSize: "16px",
+                                    lineHeight: "140%",
+                                }}
+                            >
+                                {isLoading ? "Сохраняем…" : "Сохранить"}
                             </Button>
                         </Stack>
                     </Stack>
