@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -20,25 +19,34 @@ import {
   materialService,
   type MaterialType,
 } from "@/entities/Materials";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const MaterialsList = () => {
-  const [files, setFiles] = useState<MaterialType[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    materialService
-      .listRequest()
-      .then((data: MaterialType[]) => {
-        console.log(data);
-        setFiles(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
-  }, []);
+  const {
+    data: files = [],
+    isLoading,
+    error,
+  } = useQuery<MaterialType[], Error>({
+    queryKey: ["materials"],
+    queryFn: () => materialService.listRequest(),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => materialService.deleteFile(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["materials"] });
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
+      alert(error.message || "Ошибка при удалении файла");
+    },
+  });
+
+  const handleDelete = (file: MaterialType) => {
+    deleteMutation.mutate(file.id);
+  };
 
   const handleDownload = (file: MaterialType) => {
     const link = document.createElement("a");
@@ -50,17 +58,8 @@ export const MaterialsList = () => {
     document.body.removeChild(link);
   };
 
-  const handleDelete = (file: MaterialType) => {
-    materialService
-      .deleteFile(file.id)
-      .then(() => {
-        setFiles((prev) => prev.filter((f) => f.id !== file.id));
-      })
-      .catch((err) => alert(err.message));
-  };
-
-  if (loading) return <CircularProgress />;
-  if (error) return <Typography color="error">{error}</Typography>;
+  if (isLoading) return <CircularProgress />;
+  if (error) return <Typography color="error">{error.message}</Typography>;
 
   return (
     <Box sx={{ width: "100%", backgroundColor: "#FFFFFF", p: "20px" }}>
@@ -119,7 +118,7 @@ export const MaterialsList = () => {
                     lineHeight: "140%",
                     fontWeight: "500",
                     p: "16px 12px 20px 12px",
-                    borderBottom: "1px solid #E3E3E3"
+                    borderBottom: "1px solid #E3E3E3",
                   }}
                 >
                   <Link
@@ -137,10 +136,23 @@ export const MaterialsList = () => {
                     lineHeight: "140%",
                     fontWeight: "500",
                     p: "16px 12px 20px 12px",
-                    borderBottom: "1px solid #E3E3E3"
+                    borderBottom: "1px solid #E3E3E3",
                   }}
                 >
-                  {file.categories}
+                  {file.categories.map((category, index) => (
+                    <Typography
+                      key={category.id || index}
+                      sx={{
+                        color: "#2B2735",
+                        fontSize: "14px",
+                        lineHeight: "140%",
+                        fontWeight: "500",
+                      }}
+                    >
+                      {category.name}
+                      {index < file.categories.length - 1 ? ", " : ""}
+                    </Typography>
+                  ))}
                 </TableCell>
                 <TableCell
                   sx={{
@@ -149,7 +161,7 @@ export const MaterialsList = () => {
                     lineHeight: "140%",
                     fontWeight: "500",
                     p: "16px 12px 20px 12px",
-                    borderBottom: "1px solid #E3E3E3"
+                    borderBottom: "1px solid #E3E3E3",
                   }}
                 >
                   {file.file_type}
@@ -161,7 +173,7 @@ export const MaterialsList = () => {
                     lineHeight: "140%",
                     fontWeight: "500",
                     p: "16px 12px 20px 12px",
-                    borderBottom: "1px solid #E3E3E3"
+                    borderBottom: "1px solid #E3E3E3",
                   }}
                 >
                   {formatDate(file.created_at)}
@@ -173,7 +185,7 @@ export const MaterialsList = () => {
                     lineHeight: "140%",
                     fontWeight: "500",
                     p: "16px 12px 20px 12px",
-                    borderBottom: "1px solid #E3E3E3"
+                    borderBottom: "1px solid #E3E3E3",
                   }}
                 >
                   {file.is_active ? "Активный" : "Не активный"}
