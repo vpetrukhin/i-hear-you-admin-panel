@@ -13,18 +13,19 @@ export const SidebarLink = ({ to, children, Icon }: SidebarLinkProps) => {
     <NavLink
       to={to}
       style={({ isActive }) => ({
-        padding: "18px 20px",
+        padding: "18px 12px",
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
         gap: "12px",
         textDecoration: "none",
+        textTransform: "uppercase",
         fontSize: 16,
         lineHeight: "140%",
         fontWeight: "600",
         color: isActive ? "#fff" : "#2B2735",
         borderRadius: "8px",
-        backgroundColor: isActive ? "#8028AA" : "transparent",
+        backgroundColor: isActive ? "#2B2735" : "transparent",
       })}
     >
       {Icon && <Icon sx={{ width: "24px", height: "24px" }} />}
