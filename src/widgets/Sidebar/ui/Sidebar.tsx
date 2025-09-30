@@ -16,7 +16,7 @@ export const Sidebar = () => {
     logout();
     navigate(LOGIN_PAGE_ROUTE);
   };
-
+ 
   return (
     <Box
       sx={{
