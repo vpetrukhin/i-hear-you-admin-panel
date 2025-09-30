@@ -12,8 +12,8 @@ export interface LoginResponseApiType {
 
 const AUTH_API_URL_MAP = {
   login: "/api/auth/jwt/create",
-  refresh: "/auth/jwt/refresh",
-  verify: "/auth/jwt/verify",
+  refresh: "/api/auth/jwt/refresh",
+  verify: "/api/auth/jwt/verify",
 };
 
 export const loginRequest = async (
