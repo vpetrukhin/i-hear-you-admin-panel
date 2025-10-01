@@ -1,22 +1,15 @@
+import { MaterialsPage } from "@/features/MaterialsPage";
 import { Page } from "@/widgets/Page";
-import { useNavigate, useParams } from "react-router";
+import { PageContent } from "@/widgets/PageContent";
+import { Sidebar } from "@/widgets/Sidebar";
 
-interface Props {
-  materialListPageRoute: string;
-}
-
-export const MaterialPage = ({ materialListPageRoute }: Props) => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-
-  if (!id) {
-    navigate(materialListPageRoute);
-    return;
-  }
-
+export const MaterialPage = () => {
   return (
-    <Page>
-      Страница детальной информации о материале {id}
-    </Page>
+      <Page>
+        <Sidebar />
+        <PageContent>
+          <MaterialsPage />
+        </PageContent>
+      </Page>
   );
 };

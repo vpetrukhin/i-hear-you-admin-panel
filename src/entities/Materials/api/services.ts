@@ -15,3 +15,10 @@ export const deleteFile = async (
   const res = await request.delete<any>(link);
   return res.data;
 };
+
+export const fileRequest = async (
+    id: number
+): Promise<MaterialType[]> => {
+  const res = await request.get<any>(`${MATERIALS_API_URL_MAP.list}/${id}`);
+  return res.data;
+};
