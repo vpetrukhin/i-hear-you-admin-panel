@@ -24,10 +24,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useModal from "@/shared/hooks/useModal";
 import { ModalWrapper } from "@/shared/ui/ModalWrapper";
 import { useState } from "react";
+import useNotification from "@/shared/hooks/useNotification";
+import { Notification } from "@/shared/ui/Notification";
 
 export const MaterialsList = () => {
   const queryClient = useQueryClient();
   const { isOpen, openModal, closeModal } = useModal();
+  const { isNotificationOpen, showNotification } = useNotification();
   const [selectedFile, setSelecteFile] = useState<number>(0);
 
   const {
@@ -58,6 +61,7 @@ export const MaterialsList = () => {
   const handleDelete = () => {
     deleteMutation.mutate(selectedFile);
     closeModal();
+    showNotification();
   };
 
   const handleDownload = (file: MaterialType) => {
@@ -314,6 +318,8 @@ export const MaterialsList = () => {
           </Button>
         </Box>
       </ModalWrapper>
+
+      <Notification type="success" text="Файл удалён" isOpen={isNotificationOpen} />
     </Box>
   );
 };
