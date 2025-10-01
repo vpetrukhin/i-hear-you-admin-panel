@@ -16,7 +16,7 @@ FROM alpine:3.18 AS runner
 
 WORKDIR /app
 
-CMD cp -r /dist ./dist
-# Копируем только статику
+COPY --from=builder /app/dist ./dist
 
-# На выходе: минимальный образ с папкой dist
+# Ничего не запускаем, просто оставляем файлы
+CMD ["sh", "-c", "cp -r /dist/* ./dist/ || true"]
