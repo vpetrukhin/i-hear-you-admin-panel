@@ -10,6 +10,7 @@ import {
   Typography,
   Box,
   Link,
+  Button,
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -20,9 +21,17 @@ import {
   type MaterialType,
 } from "@/entities/Materials";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import useModal from "@/shared/hooks/useModal";
+import { ModalWrapper } from "@/shared/ui/ModalWrapper";
+import { useState } from "react";
+import useNotification from "@/shared/hooks/useNotification";
+import { Notification } from "@/shared/ui/Notification";
 
 export const MaterialsList = () => {
   const queryClient = useQueryClient();
+  const { isOpen, openModal, closeModal } = useModal();
+  const { isNotificationOpen, showNotification } = useNotification();
+  const [selectedFile, setSelecteFile] = useState<number>(0);
 
   const {
     data: files = [],
@@ -44,8 +53,15 @@ export const MaterialsList = () => {
     },
   });
 
-  const handleDelete = (file: MaterialType) => {
-    deleteMutation.mutate(file.id);
+  const handleClickDelete = (id: number) => {
+    setSelecteFile(id);
+    openModal();
+  };
+
+  const handleDelete = () => {
+    deleteMutation.mutate(selectedFile);
+    closeModal();
+    showNotification();
   };
 
   const handleDownload = (file: MaterialType) => {
@@ -218,7 +234,7 @@ export const MaterialsList = () => {
                     </IconButton>
                     <IconButton
                       aria-label="удалить"
-                      onClick={() => handleDelete(file)}
+                      onClick={() => handleClickDelete(file.id)}
                       sx={{
                         color: "#2B2735",
                         p: "0",
@@ -242,6 +258,68 @@ export const MaterialsList = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <ModalWrapper isOpen={isOpen} onClose={closeModal} title="Удаление шага">
+        <Typography
+          sx={{
+            color: "#2B2735",
+            fontSize: "20px",
+            lineHeight: "140%",
+            fontWeight: "400",
+            mb: "44px",
+          }}
+        >
+          Вы уверены, что&nbsp;хотите удалить Шаг&nbsp;1 - Выбор контекста? После удаления
+          шаг больше не&nbsp;будет отображаться в&nbsp;боте
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "12px",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button
+            onClick={closeModal}
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              paddng: "8px 22px",
+              color: "#FFFFFF",
+              fontSize: "15px",
+              lineHeight: "26px",
+              fontWeight: "500",
+              backgroundColor: "#2B2735",
+              borderRadius: "px",
+              textTransform: "uppercase"
+            }}
+          >
+            Отмена
+          </Button>
+           <Button
+            onClick={() => handleDelete()}
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              paddng: "8px 22px",
+              color: "#FFFFFF",
+              fontSize: "15px",
+              lineHeight: "26px",
+              fontWeight: "500",
+              backgroundColor: "#FF3333",
+              borderRadius: "px",
+              textTransform: "uppercase"
+            }}
+          >
+            Удалить
+          </Button>
+        </Box>
+      </ModalWrapper>
+
+      <Notification type="success" text="Файл удалён" isOpen={isNotificationOpen} />
     </Box>
   );
 };
