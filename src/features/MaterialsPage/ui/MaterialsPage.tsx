@@ -3,7 +3,8 @@ import {
     Breadcrumbs,
     Link,
     Divider,
-    Chip,
+    Switch,
+    FormControlLabel,
     CircularProgress,
     Typography,
     Box,
@@ -16,15 +17,17 @@ import {
 } from "@/entities/Materials";
 import {formatDate} from "../../MaterialsList/utils";
 
-import {useQuery} from "@tanstack/react-query";
+import {useQuery, useMutation, useQueryClient} from "@tanstack/react-query";
 import {useNavigate, useParams} from "react-router";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import {useState} from 'react';
 
 interface Props {
     materialListPageRoute: string;
 }
 
 export const MaterialsPage = ({materialListPageRoute}: Props) => {
+    const queryClient = useQueryClient();
     const {id} = useParams();
     const navigate = useNavigate();
 
@@ -32,7 +35,18 @@ export const MaterialsPage = ({materialListPageRoute}: Props) => {
         navigate(materialListPageRoute);
         return;
     }
+    const [checked, setChecked] = useState(false);
 
+    const updateMutation = useMutation({
+        mutationFn: (id: number, is_active: boolean) => materialService.fileActive(id, checked),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ["materials", id]});
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onError: (error: any) => {
+            alert(error.message || "Ошибка при обновлении файла");
+        },
+    });
     const {
         data: files = [],
         isLoading,
@@ -41,12 +55,16 @@ export const MaterialsPage = ({materialListPageRoute}: Props) => {
         queryKey: ["materials", id],
         queryFn: () => materialService.fileRequest(id),
     });
-
     if (isLoading) return <CircularProgress/>;
     if (error) return <Typography color="error">{error.message}</Typography>;
 
-    return (
+    const handleChange = (event) => {
+        const {checked} = event.target;
+        setChecked(checked);
+        updateMutation.mutate(id, checked);
+    };
 
+    return (
         <Box sx={{width: "100%", backgroundColor: "#FFFFFF", p: "20px"}}>
             {/* Навигационная цепочка */}
             <Breadcrumbs
@@ -80,16 +98,21 @@ export const MaterialsPage = ({materialListPageRoute}: Props) => {
 
                 <Box sx={{display: 'flex', flexDirection: 'column', gap: 2}}>
 
-
                     <Box>
                         <Typography variant="subtitle1" color="text.secondary">
-                            Статус:
-                        </Typography>
-                        <Chip
+                            Статус: <FormControlLabel
+                            control={
+                                <Switch
+                                    color="success"
+                                    checked={!!files.is_active}
+                                    onChange={handleChange}
+                                />
+                            }
                             label={files.is_active ? 'Активен' : 'Неактивен'}
-                            color={files.is_active ? 'success' : 'default'}
-                            size="small"
+                            sx={{marginLeft: 'auto'}}
                         />
+                        </Typography>
+
                     </Box>
                     <Box>
                         <Typography variant="subtitle1" color="text.secondary">
