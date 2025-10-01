@@ -18,7 +18,4 @@ RUN rm -rf /usr/share/nginx/html/*
 # Копируем собранный фронт
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Кладём свой nginx.conf (если нужен кастом)
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
 EXPOSE 80
