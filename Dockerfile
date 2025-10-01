@@ -1,22 +1,12 @@
-# --- Сборка фронтенда ---
 FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Кэшируем зависимости
 COPY package*.json ./
 RUN npm install
 
-# Копируем проект и собираем
 COPY . .
 RUN npm run build
 
-# --- Финальный образ ---
-FROM alpine:3.18 AS runner
-
-WORKDIR /app
-
-COPY --from=builder /app/dist ./dist
-
-# Ничего не запускаем, просто оставляем файлы
-CMD ["sh", "-c", "cp -r /dist/* ./dist/ || true"]
+# Фронтенд только собирается, не запускает сервер
+CMD ["echo", "Frontend built successfully"]
