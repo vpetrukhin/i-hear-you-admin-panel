@@ -30,5 +30,5 @@ export interface MaterialType {
   created_at: string;
   paths: any;
   categories: MaterialCategoryType[];
-  topics: any;
+  topics: { id: string; name: string }[];
 }

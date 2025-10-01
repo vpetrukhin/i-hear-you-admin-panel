@@ -22,7 +22,7 @@ export const router = createBrowserRouter([
   },
   {
     path: MATERIAL_PAGE_ROUTE,
-    element: <MaterialPage materialListPageRoute={MATERIAL_LIST_PAGE_ROUTE} />,
+    element: <MaterialPage />,
   },
   {
     path: LOGIN_PAGE_ROUTE,

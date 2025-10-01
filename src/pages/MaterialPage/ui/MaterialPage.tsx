@@ -5,11 +5,11 @@ import { Sidebar } from "@/widgets/Sidebar";
 
 export const MaterialPage = () => {
   return (
-      <Page>
-        <Sidebar />
-        <PageContent>
-          <MaterialsPage />
-        </PageContent>
-      </Page>
+    <Page>
+      <Sidebar />
+      <PageContent>
+        <MaterialsPage materialListPageRoute={"/materials"} />
+      </PageContent>
+    </Page>
   );
 };
