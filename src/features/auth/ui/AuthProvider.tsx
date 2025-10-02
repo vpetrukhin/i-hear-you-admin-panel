@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { AuthContext, type AuthContextType } from "../model/AuthContext";
 import { type LoginApiDTO } from "../api/authApi";
 import { useLoginMutation } from "../lib/useLoginMutation";
@@ -13,9 +13,13 @@ export const AuthProvider = ({ children }: Props) => {
   const loginMutation = useLoginMutation();
   const refreshMutation = useRefreshMutation();
 
-  // TODO: Запрос за user
+  const token = getToken();
 
-  const isAuth = Boolean(getToken());
+  const [isAuth, seIsAuth] = useState(Boolean(token));
+
+  useEffect(() => {
+    seIsAuth(Boolean(token));
+  }, [token]);
 
   const login = async (dto: LoginApiDTO) => {
     loginMutation.mutate(dto);
