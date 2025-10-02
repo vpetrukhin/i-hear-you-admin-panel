@@ -1,7 +1,6 @@
 import { useAuthContext } from "@/features/auth";
 import { LOGIN_PAGE_ROUTE } from "@/pages/LoginPage";
 import { Box, Button, Stack, Typography } from "@mui/material";
-import HomeIcon from "@mui/icons-material/Home";
 import SettingsIcon from "@mui/icons-material/Settings";
 import UploadIcon from "@mui/icons-material/Upload";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -16,7 +15,7 @@ export const Sidebar = () => {
     logout();
     navigate(LOGIN_PAGE_ROUTE);
   };
- 
+
   return (
     <Box
       sx={{
@@ -64,11 +63,8 @@ export const Sidebar = () => {
             px: "12px",
           }}
         >
-          <SidebarLink to="/home" Icon={HomeIcon}>
-            Главная
-          </SidebarLink>
           <SidebarLink to="/scenarios" Icon={SettingsIcon}>
-            Настройка сценариев
+            Настройки бота(в разработке)
           </SidebarLink>
           <SidebarLink to="/materials" Icon={UploadIcon}>
             Управление контентом

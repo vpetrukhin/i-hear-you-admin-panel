@@ -9,10 +9,18 @@ export interface MaterialsListApiType {
   created_at: string;
   paths: any;
   categories: MaterialCategoryType[];
-  topics: any;
+  topics: MaterialTopicType[];
 }
 
 export interface MaterialCategoryType {
+  id: number;
+  name: string;
+  slug: string;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface MaterialTopicType {
   id: number;
   name: string;
   slug: string;
@@ -31,4 +39,14 @@ export interface MaterialType {
   paths: any;
   categories: MaterialCategoryType[];
   topics: { id: string; name: string }[];
+}
+
+export interface CreateMaterialDTO {
+  name: string;
+  file: string;
+  file_type: string;
+  "is_active": false;
+  paths: number[];
+  categories: number[];
+  topics: number[];
 }
