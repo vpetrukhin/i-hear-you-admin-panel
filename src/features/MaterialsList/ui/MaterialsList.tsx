@@ -242,7 +242,7 @@ export const MaterialsList = () => {
           type={"success"}
         />
       </Box>
-      <Box>
+      <Box sx={{ width: "100%", backgroundColor: "#FFFFFF", p: "20px", mt:"32px" }}>
         <Typography
           align="left"
           color="#2B2735"
