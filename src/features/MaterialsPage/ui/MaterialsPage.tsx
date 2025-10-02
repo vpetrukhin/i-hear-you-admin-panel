@@ -45,13 +45,15 @@ export const MaterialsPage = ({materialListPageRoute}: Props) => {
         },
     });
     const {
-        data: files = [],
+        data: file,
         isLoading,
         error,
     } = useQuery<Error>({
         queryKey: ["materials", id],
         queryFn: () => materialService.fileRequest(id),
     });
+    
+    if (!file) return <Typography color="error">Файл не найден</Typography>;
     if (isLoading) return <CircularProgress/>;
     if (error) return <Typography color="error">{error.message}</Typography>;
 
@@ -72,7 +74,7 @@ export const MaterialsPage = ({materialListPageRoute}: Props) => {
                 Материалы
             </Link>
             <Link underline="none" color="inherit">
-                {files.name}
+                {file.name}
             </Link>
         </Breadcrumbs>
 
@@ -101,11 +103,11 @@ export const MaterialsPage = ({materialListPageRoute}: Props) => {
                         control={
                             <Switch
                                 color="success"
-                                checked={!!files.is_active}
+                                checked={!!file.is_active}
                                 onChange={handleChange}
                             />
                         }
-                        label={files.is_active ? 'Активен' : 'Неактивен'}
+                        label={file.is_active ? 'Активен' : 'Неактивен'}
                         sx={{marginLeft: 'auto'}}
                     />
                     </Typography>
@@ -116,7 +118,7 @@ export const MaterialsPage = ({materialListPageRoute}: Props) => {
                         Название файла:
                     </Typography>
                     <Typography variant="body1" fontWeight="medium">
-                        {files.name}
+                        {file.name}
                     </Typography>
                 </Box>
 
@@ -125,7 +127,7 @@ export const MaterialsPage = ({materialListPageRoute}: Props) => {
                         Тип файла:
                     </Typography>
                     <Typography variant="body1" fontWeight="medium">
-                        {files.file_type}
+                        {file.file_type}
                     </Typography>
                 </Box>
 
@@ -133,13 +135,13 @@ export const MaterialsPage = ({materialListPageRoute}: Props) => {
                     <Typography variant="subtitle1" color="text.secondary">
                         Категория:
                     </Typography>
-                    {files.categories.map((category, index) => (
+                    {file.categories.map((category, index) => (
                         <Typography
                             key={category.id || index}
                             variant="body1" fontWeight="medium"
                         >
                             {category.name}
-                            {index < files.categories.length - 1 ? ", " : ""}
+                            {index < file.categories.length - 1 ? ", " : ""}
                         </Typography>
                     ))}
                 </Box>
@@ -148,13 +150,13 @@ export const MaterialsPage = ({materialListPageRoute}: Props) => {
                     <Typography variant="subtitle1" color="text.secondary">
                         Тема:
                     </Typography>
-                    {files.topics.map((topic, index) => (
+                    {file.topics.map((topic, index) => (
                         <Typography
                             key={topic.id || index}
                             variant="body1" fontWeight="medium"
                         >
                             {topic.name}
-                            {index < files.topics.length - 1 ? ", " : ""}
+                            {index < file.topics.length - 1 ? ", " : ""}
                         </Typography>
                     ))}
 
@@ -164,7 +166,7 @@ export const MaterialsPage = ({materialListPageRoute}: Props) => {
                         Дата загрузки:
                     </Typography>
                     <Typography variant="body1" fontWeight="medium">
-                        {formatDate(files.created_at)}
+                        {formatDate(file.created_at)}
                     </Typography>
                 </Box>
 
@@ -173,7 +175,7 @@ export const MaterialsPage = ({materialListPageRoute}: Props) => {
                         Описание:
                     </Typography>
                     <Typography variant="body1" fontWeight="medium">
-                        {files.description}
+                        {file.description}
                     </Typography>
                 </Box>
 
