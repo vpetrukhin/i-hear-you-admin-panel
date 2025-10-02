@@ -1,19 +1,26 @@
-import { LoginForm } from "@/features/auth";
+import { LoginForm, useAuthContext } from "@/features/auth";
 import { useLoginMutation } from "@/features/auth/lib/useLoginMutation";
+import { MATERIAL_LIST_PAGE_ROUTE } from "@/pages/MaterialListPage";
 import { Box, Container } from "@mui/material";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 
 export const LoginPage = () => {
   const loginMutation = useLoginMutation();
   const navigate = useNavigate();
+
+  const { isAuth } = useAuthContext();
 
   const handleLogin = async (
     credentials: { email: string; password: string },
   ) => {
     await loginMutation.mutateAsync(credentials);
 
-    navigate("/");
+    navigate(MATERIAL_LIST_PAGE_ROUTE);
   };
+
+  if (isAuth) {
+    return <Navigate to={MATERIAL_LIST_PAGE_ROUTE} />;
+  }
 
   return (
     <Container

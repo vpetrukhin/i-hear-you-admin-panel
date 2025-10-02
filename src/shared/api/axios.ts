@@ -1,6 +1,6 @@
 import axios from "axios";
 import { appConfig } from "../config/appConfig";
-import { getToken, saveToken } from "@/features/auth/lib/token";
+import { deleteToken, getToken, saveToken } from "@/features/auth/lib/token";
 import { refreshRequest } from "@/features/auth/api/authApi";
 
 export const request = axios.create({
@@ -28,6 +28,13 @@ request.interceptors.response.use((response) => response, async (error) => {
   // Здесь можете сделать что-то с ошибкой ответа
   const config = error?.config;
 
+  console.log(error.response.data);
+
+  if (error.response.data.code === "token_not_valid") {
+    deleteToken();
+    return;
+  }
+
   if (error?.response?.status === 401 && !config?.sent) {
     config.sent = true;
 
@@ -39,6 +46,8 @@ request.interceptors.response.use((response) => response, async (error) => {
         ...config.headers,
         authorization: `Bearer ${result.access}`,
       };
+    } else {
+      deleteToken();
     }
 
     return axios(config);
