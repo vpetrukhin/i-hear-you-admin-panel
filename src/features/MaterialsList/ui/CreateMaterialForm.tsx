@@ -22,6 +22,7 @@ import {
 
 interface Props {
   formState: CreateFormStateType;
+  isCreatePending?: boolean;
   changeFormState: (newState: Partial<CreateFormStateType>) => void;
   onCancel: () => void;
   onSubmit: (ev: FormEvent) => void;

@@ -40,3 +40,13 @@ export interface MaterialType {
   categories: MaterialCategoryType[];
   topics: { id: string; name: string }[];
 }
+
+export interface CreateMaterialDTO {
+  name: string;
+  file: string;
+  file_type: string;
+  "is_active": false;
+  paths: number[];
+  categories: number[];
+  topics: number[];
+}

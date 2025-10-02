@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { request } from "@/shared/api/axios";
 import type {
+  CreateMaterialDTO,
   MaterialCategoryType,
   MaterialTopicType,
   MaterialType,
@@ -10,6 +11,7 @@ import {
   MATERIALS_API_URL_MAP,
   TOPICS_API_URL_MAP,
 } from "./urls";
+import type { AxiosResponse } from "axios";
 
 export const listRequest = async (): Promise<MaterialType[]> => {
   const res = await request.get<any>(MATERIALS_API_URL_MAP.list);
@@ -28,6 +30,16 @@ export const fileRequest = async (
   id: number,
 ): Promise<MaterialType> => {
   const res = await request.get<any>(`${MATERIALS_API_URL_MAP.list}/${id}`);
+  return res.data;
+};
+
+export const createFile = async (dto: CreateMaterialDTO) => {
+  const res = await request.post<
+    unknown,
+    AxiosResponse<unknown>,
+    CreateMaterialDTO
+  >(MATERIALS_API_URL_MAP.create, dto);
+
   return res.data;
 };
 

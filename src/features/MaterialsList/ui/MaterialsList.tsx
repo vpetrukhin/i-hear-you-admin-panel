@@ -20,6 +20,7 @@ import {
   MATERIALS_FRONT_URL_MAP,
   materialService,
   type MaterialType,
+  useCreateMaterialMutation,
 } from "@/entities/Materials";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useModal from "@/shared/hooks/useModal";
@@ -30,6 +31,7 @@ import { Notification } from "@/shared/ui/Notification";
 import { FileUploader } from "react-drag-drop-files";
 import { UploadIcon } from "./UploadIcon";
 import type {
+  CreateMaterialDTO,
   MaterialCategoryType,
   MaterialTopicType,
 } from "@/entities/Materials/types";
@@ -62,6 +64,8 @@ export const MaterialsList = () => {
     defaultFormState,
   );
 
+  const notification = useNotification();
+
   const {
     data: files = [],
     isLoading,
@@ -70,6 +74,8 @@ export const MaterialsList = () => {
     queryKey: ["materials"],
     queryFn: () => materialService.listRequest(),
   });
+
+  const createMutation = useCreateMaterialMutation();
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => materialService.deleteFile(id),
@@ -115,8 +121,26 @@ export const MaterialsList = () => {
     ev.preventDefault();
     console.log(formState);
 
-    // fileCreate
+    const file = Array.isArray(formState.file)
+      ? formState.file[0]
+      : formState.file;
 
+    const createDto: CreateMaterialDTO = {
+      name: formState.name,
+      file: "",
+      file_type: file?.type ?? "",
+      categories: formState.category?.id ? [formState.category.id] : [],
+      topics: formState.topic?.id ? [formState.topic.id] : [],
+      paths: formState.paths,
+      is_active: false,
+    };
+
+    console.log(createDto);
+
+    // fileCreate
+    // createMutation.mutate(createDto)
+    //
+    notification.showNotification();
     handleCreateModalClose();
   };
 
@@ -205,12 +229,18 @@ export const MaterialsList = () => {
             </Typography>
           </Stack>
           <CreateMaterialForm
+            isCreatePending={createMutation.isPending}
             formState={formState}
             changeFormState={changeFormState}
             onCancel={handleCreateModalClose}
             onSubmit={handleCreateSubmit}
           />
         </ModalWrapper>
+        <Notification
+          isOpen={notification.isNotificationOpen}
+          text={"Файл добавлен"}
+          type={"success"}
+        />
       </Box>
       <Box>
         <Typography

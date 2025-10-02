@@ -1,4 +1,5 @@
 import {
+  createFile,
   deleteFile,
   fileRequest,
   getCategoriesList,
@@ -12,6 +13,7 @@ export const materialService = {
   listRequest,
   deleteFile,
   fileRequest,
+  createFile,
 };
 
 export const categoriesService = {
@@ -24,4 +26,5 @@ export const topicsService = {
 
 export { useCategoriesList } from "./lib/useCatgoriesListQuery";
 export { useTopicsList } from "./lib/useTopicsList";
+export { useCreateMaterialMutation } from "./lib/useCreateMaterialMutation";
 export { PATHS_LIST } from "./config/const";
