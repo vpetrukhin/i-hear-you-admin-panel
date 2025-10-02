@@ -19,7 +19,6 @@ export const SidebarLink = ({ to, children, Icon }: SidebarLinkProps) => {
         alignItems: "center",
         gap: "12px",
         textDecoration: "none",
-        textTransform: "uppercase",
         fontSize: 16,
         lineHeight: "140%",
         fontWeight: "600",
