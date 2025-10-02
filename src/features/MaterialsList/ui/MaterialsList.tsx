@@ -79,6 +79,7 @@ export const MaterialsList = () => {
 
   return (
     <Box sx={{ width: "100%", backgroundColor: "#FFFFFF", p: "20px" }}>
+
       <Typography
         align="left"
         color="#2B2735"

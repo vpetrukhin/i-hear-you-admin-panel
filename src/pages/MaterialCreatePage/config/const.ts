@@ -1,0 +1,1 @@
+export const MATERIAL_CREATE_PAGE_ROUTE = '/materials/new';
