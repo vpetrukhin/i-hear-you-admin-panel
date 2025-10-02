@@ -19,13 +19,12 @@ export const SidebarLink = ({ to, children, Icon }: SidebarLinkProps) => {
         alignItems: "center",
         gap: "12px",
         textDecoration: "none",
-        textTransform: "uppercase",
         fontSize: 16,
         lineHeight: "140%",
         fontWeight: "600",
-        color: isActive ? "#fff" : "#2B2735",
+        color: isActive ? "#2B2735" : "#FFFFFF",
         borderRadius: "8px",
-        backgroundColor: isActive ? "#2B2735" : "transparent",
+        backgroundColor: isActive ? "#D8FA91" : "transparent",
       })}
     >
       {Icon && <Icon sx={{ width: "24px", height: "24px" }} />}

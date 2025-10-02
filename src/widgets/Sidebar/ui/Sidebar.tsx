@@ -21,7 +21,7 @@ export const Sidebar = () => {
       sx={{
         width: "28%",
         minWidth: 200,
-        bgcolor: "#FAF9FD",
+        bgcolor: "#2B2735",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
@@ -41,7 +41,7 @@ export const Sidebar = () => {
             px: "20px",
             pt: "20px",
             pb: "56px",
-            color: "#2B2735",
+            color: "#FFFFFF",
           }}
         >
           <Typography
