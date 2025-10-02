@@ -1,3 +1,4 @@
+import { theme } from "@/app/theme";
 import { LoginForm, useAuthContext } from "@/features/auth";
 import { useLoginMutation } from "@/features/auth/lib/useLoginMutation";
 import { MATERIAL_LIST_PAGE_ROUTE } from "@/pages/MaterialListPage";
@@ -10,9 +11,10 @@ export const LoginPage = () => {
 
   const { isAuth } = useAuthContext();
 
-  const handleLogin = async (
-    credentials: { email: string; password: string },
-  ) => {
+  const handleLogin = async (credentials: {
+    email: string;
+    password: string;
+  }) => {
     await loginMutation.mutateAsync(credentials);
 
     navigate(MATERIAL_LIST_PAGE_ROUTE);
@@ -23,29 +25,53 @@ export const LoginPage = () => {
   }
 
   return (
-    <Container
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Box sx={{ mb: 4 }}>
-        {/* <img src="/logo.png" alt="Логотип" style={{ maxHeight: 80 }} /> */}
-        Я тебя слышу
-      </Box>
-
-      <LoginForm
-        isLoading={loginMutation.isPending}
-        errors={loginMutation.isError
-          ? {
-            common: loginMutation.error.response?.data.detail,
+    <Box sx={{ maxHeight: "100vh", overflow: "hidden" }}>
+      <Container
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "80%",
+          position: "relative",
+          [theme.breakpoints.up("md")]: {
+            width: "49.17%",
+          },
+        }}
+      >
+        <Box
+          component="img"
+          src="/images/login-bg.png"
+          alt="Логотип"
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "0%",
+            transform: "translateY(-50%)",
+            width: "100%",
+            height: "auto",
+            objectFit: "contain",
+            zIndex: 1,
+            minWidth: "200px",
+            [theme.breakpoints.up("md")]: {
+              minWidth: "600px",
+              left: "-5%",
+            },
+          }}
+        />
+        <LoginForm
+          isLoading={loginMutation.isPending}
+          errors={
+            loginMutation.isError
+              ? {
+                  common: loginMutation.error.response?.data.detail,
+                }
+              : undefined
           }
-          : undefined}
-        onSubmit={handleLogin}
-      />
-    </Container>
+          onSubmit={handleLogin}
+        />
+      </Container>
+    </Box>
   );
 };
