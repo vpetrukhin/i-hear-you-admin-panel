@@ -9,13 +9,14 @@ export const LoginPage = () => {
   const loginMutation = useLoginMutation();
   const navigate = useNavigate();
 
-  const { isAuth } = useAuthContext();
+  const { isAuth, login } = useAuthContext();
 
   const handleLogin = async (credentials: {
     email: string;
     password: string;
   }) => {
-    await loginMutation.mutateAsync(credentials);
+    // await loginMutation.mutateAsync(credentials);
+    await login(credentials)
 
     navigate(MATERIAL_LIST_PAGE_ROUTE);
   };
@@ -65,8 +66,8 @@ export const LoginPage = () => {
           errors={
             loginMutation.isError
               ? {
-                  common: loginMutation.error.response?.data.detail,
-                }
+                common: loginMutation.error.response?.data.detail,
+              }
               : undefined
           }
           onSubmit={handleLogin}

@@ -14,7 +14,7 @@ import {
 import type { AxiosResponse } from "axios";
 
 export const listRequest = async (): Promise<MaterialType[]> => {
-  const res = await request.get<any>(MATERIALS_API_URL_MAP.list);
+  const res = await request.get<MaterialType[]>(MATERIALS_API_URL_MAP.list);
   return res.data;
 };
 
@@ -34,15 +34,15 @@ export const fileRequest = async (
 };
 
 export const fileActive = async (
-      id: number,
-      is_active: boolean
-  ): Promise<MaterialType> => {
-    const link = `${MATERIALS_API_URL_MAP.list}/${id}`;
-    const res = await request.patch<any>(link, {
-      is_active: is_active
-    });
-  
-    return res.data;
+  id: number,
+  is_active: boolean
+): Promise<MaterialType> => {
+  const link = `${MATERIALS_API_URL_MAP.list}/${id}`;
+  const res = await request.patch<any>(link, {
+    is_active: is_active
+  });
+
+  return res.data;
 }
 
 export const createFile = async (dto: CreateMaterialDTO) => {
