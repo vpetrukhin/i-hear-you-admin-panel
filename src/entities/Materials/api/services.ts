@@ -28,8 +28,8 @@ export const deleteFile = async (
 
 export const fileRequest = async (
   id: number,
-): Promise<MaterialType> => {
-  const res = await request.get<any>(`${MATERIALS_API_URL_MAP.list}/${id}`);
+) => {
+  const res = await request.get<MaterialType>(MATERIALS_API_URL_MAP.file(String(id)));
   return res.data;
 };
 

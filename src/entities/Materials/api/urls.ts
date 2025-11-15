@@ -1,5 +1,6 @@
 export const MATERIALS_API_URL_MAP = {
   list: "/api/files",
+  file: (id: string) => `/api/files/${id}`,
   create: "api/files",
 };
 

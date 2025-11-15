@@ -19,19 +19,5 @@ import { materials } from './mockData';
  *
  * */
 export const handlers = [
-  http.post("/api/auth/jwt/create", () => {
-    return HttpResponse.json({
-      access: 'token',
-    });
-  }),
-  http.post("/api/auth/jwt/refresh", () => {
-    return HttpResponse.json({
-      access: 'new_token',
-    });
-  }),
   /* files */
-  http.get("/api/files", () => {
-    return HttpResponse.json(materials)
-    // return HttpResponse.json([], { status: 401 })
-  })
 ];
