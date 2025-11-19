@@ -1,8 +1,8 @@
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useState } from "react";
 import { AuthContext, type AuthContextType } from "../model/AuthContext";
 import { type LoginApiDTO } from "../api/authApi";
 import { useLoginMutation } from "../lib/useLoginMutation";
-import { deleteToken, getToken } from "../lib/token";
+import { deleteToken, getToken, saveToken } from "../lib/token";
 import { useRefreshMutation } from "../lib/useRefreshMutation";
 
 interface Props {
@@ -10,16 +10,28 @@ interface Props {
 }
 
 export const AuthProvider = ({ children }: Props) => {
-  const loginMutation = useLoginMutation();
+  const [token, setToken] = useState(() => {
+    return getToken()
+  })
+
+
+  const handleSaveToken = (token: string | null) => {
+    setToken(token)
+
+    if (!token) return
+
+    saveToken(token)
+  }
+
+  const loginMutation = useLoginMutation(
+    (data) => {
+      handleSaveToken(data.access)
+    }
+
+  );
   const refreshMutation = useRefreshMutation();
 
-  const token = getToken();
-
-  const [isAuth, seIsAuth] = useState(Boolean(token));
-
-  useEffect(() => {
-    seIsAuth(Boolean(token));
-  }, [token]);
+  const isAuth = Boolean(token)
 
   const login = async (dto: LoginApiDTO) => {
     loginMutation.mutate(dto);
@@ -30,6 +42,7 @@ export const AuthProvider = ({ children }: Props) => {
   };
 
   const logout = async () => {
+    setToken(null)
     deleteToken();
   };
 

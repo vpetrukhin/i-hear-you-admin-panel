@@ -4,10 +4,9 @@ import {
   loginRequest,
   type LoginResponseApiType,
 } from "../api/authApi";
-import { saveToken } from "./token";
 import type { AxiosError } from "axios";
 
-export const useLoginMutation = () => {
+export const useLoginMutation = (onSuccess?: (data: LoginResponseApiType) => void) => {
   return useMutation<
     LoginResponseApiType,
     AxiosError<{ detail: string }, LoginResponseApiType>,
@@ -18,8 +17,6 @@ export const useLoginMutation = () => {
       const res = await loginRequest(dto);
       return res;
     },
-    onSuccess: (data) => {
-      saveToken(data.access);
-    },
+    onSuccess,
   });
 };

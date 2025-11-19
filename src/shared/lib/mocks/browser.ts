@@ -1,4 +1,5 @@
 import { setupWorker } from "msw/browser";
-import { handlers } from "./handlers";
+import type { Handlers } from ".";
+// import { handlers } from "./handlers";
 
-export const worker = setupWorker(...handlers);
+export const workerFabric = (handlers: Handlers) => setupWorker(...handlers);
