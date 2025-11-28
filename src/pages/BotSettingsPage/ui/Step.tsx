@@ -1,26 +1,17 @@
 import { Block } from "@/shared/ui/Block"
-import { EditIcon, TrashIcon } from "@/shared/ui/icons"
-import { Stack, Chip, Typography, IconButton } from "@mui/material"
+import { Stack, Chip, Typography } from "@mui/material"
+import type { ReactNode } from "react"
 
 interface Props {
   step: number
   title: string
 
-  onEdit?: (step: number) => void
-  onDelete?: (step: number) => void
+  actions?: ReactNode[]
 }
 
-export const Step = ({ step, title, onEdit, onDelete }: Props) => {
-
-  const handleEditClick = () => {
-    onEdit?.(step)
-  }
-  const handleDeleteClick = () => {
-    onDelete?.(step)
-  }
+export const Step = ({ step, title, actions }: Props) => {
 
   const chipLabel = `Шаг ${step}`
-
   return (
     <Block variant='secondary'>
       <Stack direction={'row'} justifyContent={'space-between'}>
@@ -32,20 +23,9 @@ export const Step = ({ step, title, onEdit, onDelete }: Props) => {
           }}>{title}</Typography>
         </Stack>
         {
-          (onDelete || onEdit) && (
-            <Stack direction={'row'}>
-              {onEdit && (
-                <IconButton onClick={handleEditClick}>
-                  <EditIcon />
-                </IconButton>
-              )}
-              {onDelete && (
-                <IconButton onClick={handleDeleteClick}>
-                  <TrashIcon />
-                </IconButton>
-              )}
-            </Stack>
-          )
+          actions?.map((action) => (
+            action
+          ))
         }
       </Stack>
     </Block>

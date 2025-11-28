@@ -4,11 +4,9 @@ import { PageContent } from "@/widgets/PageContent"
 import { Sidebar } from "@/widgets/Sidebar"
 import { Stack, Typography } from "@mui/material"
 import { Step } from "./Step"
+import { EditStepButton } from "@/features/EditStep"
 
 export const BotSettingsPage = () => {
-  const handleEditStep = (step: number) => {
-    console.log(step);
-  }
 
   return (
     <Page>
@@ -25,9 +23,26 @@ export const BotSettingsPage = () => {
             }}
           >Сценарий</Typography>
           <Stack spacing={3}>
-            <Step step={1} title='Выбор контекста' onEdit={handleEditStep} />
-            <Step step={2} title='Выбор категории' onEdit={handleEditStep} />
-            <Step step={3} title='Выбор темы' onEdit={handleEditStep} />
+            <Step step={1} title='Выбор контекста' />
+            <Step step={2} title='Выбор категории' actions={[
+              <EditStepButton stepData={
+                {
+                  name: 'Выбор категории',
+                  message: 'Добро пожаловать! Пожалуйста, выберите, с каким запросом Вы к нам пришли:',
+                  variants: [
+                    {
+                      id: '1',
+                      value: 'Статьи',
+                    },
+                    {
+                      id: '2',
+                      value: 'Истории',
+                    }
+                  ]
+                }
+              } />
+            ]} />
+            <Step step={3} title='Выбор темы' />
           </Stack>
         </Block>
       </PageContent>
