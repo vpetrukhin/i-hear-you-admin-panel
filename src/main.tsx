@@ -4,11 +4,13 @@ import "./index.css";
 import App from "./app/App.tsx";
 import { enableMocking, type Handlers } from "./shared/lib/mocks";
 import { authHandlers } from "./features/auth";
-import { getMaterialHandlers } from "./entities/Materials";
+import { getCategoriesHandlers, getMaterialHandlers, getTopicHandlers } from "./entities/Materials";
 
 const handlers: Handlers = [
   ...authHandlers,
   ...getMaterialHandlers(),
+  ...getCategoriesHandlers(),
+  ...getTopicHandlers()
 ]
 
 enableMocking(handlers).then(() => {
