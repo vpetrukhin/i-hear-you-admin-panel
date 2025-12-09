@@ -8,13 +8,18 @@ import { EditStepButton, getStepData, getVariantFromCategory, getVariantFromTopi
 import { useCategoriesList, useTopicsList } from "@/entities/Materials"
 import { useCategoriesChange } from "../lib/useCategoriesChange"
 import { useTopicChange } from "../lib/useTopicsChange"
+import { usePathsQuery } from "../lib/usePathsQuery"
+import { usePathsChange } from "../lib/usePathsChange"
 
 export const BotSettingsPage = () => {
   const categoriesQuery = useCategoriesList()
   const topicsQuery = useTopicsList()
+  const pathsQuery = usePathsQuery()
 
   const { handleCategoriesSave, isPending: isCategoryStepPending } = useCategoriesChange({ categories: categoriesQuery.data, refetch: categoriesQuery.refetch })
   const { handleTopicsSave, isPending: isTopicStepPending } = useTopicChange({ topics: topicsQuery.data, refetch: topicsQuery.refetch })
+  const { handlePathsSave, isPending: isPathStepPending } = usePathsChange({ paths: pathsQuery.data, refetch: pathsQuery.refetch })
+
 
   return (
     <Page>
@@ -31,7 +36,18 @@ export const BotSettingsPage = () => {
             }}
           >Сценарий</Typography>
           <Stack spacing={3}>
-            <Step step={1} title='Выбор контекста' />
+            <Step step={1} title='Выбор контекста' actions={[
+              <EditStepButton step={1} onSave={handlePathsSave} isSavePending={isPathStepPending} stepData={
+                getStepData({
+                  name: 'Выбор контекста',
+                  message: 'Добро пожаловать! Пожалуйста, выберите, с каким запросом Вы к нам пришли:',
+                  variants: pathsQuery.data?.map((path) => ({
+                    id: String(path.id),
+                    name: path.name,
+                  })) ?? []
+                })
+              } />
+            ]} />
             <Step step={2} title='Выбор категории' actions={[
               <EditStepButton step={2} onSave={handleCategoriesSave} isSavePending={isCategoryStepPending} stepData={
                 getStepData(

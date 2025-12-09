@@ -5,12 +5,14 @@ import App from "./app/App.tsx";
 import { enableMocking, type Handlers } from "./shared/lib/mocks";
 import { authHandlers } from "./features/auth";
 import { getCategoriesHandlers, getMaterialHandlers, getTopicHandlers } from "./entities/Materials";
+import { getPathHandlers } from "./pages/BotSettingsPage/index.ts";
 
 const handlers: Handlers = [
   ...authHandlers,
   ...getMaterialHandlers(),
   ...getCategoriesHandlers(),
-  ...getTopicHandlers()
+  ...getTopicHandlers(),
+  ...getPathHandlers(),
 ]
 
 enableMocking(handlers).then(() => {
