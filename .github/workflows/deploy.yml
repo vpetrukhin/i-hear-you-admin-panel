@@ -1,0 +1,41 @@
+---
+name: Deploy
+on:  
+  push:
+    branches: [main, devops/test-deploy-main]
+
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      CI_VITE_API_DOMAIN: ${{ vars.CI_VITE_API_BASE_URL }}
+    steps:
+      - name: 1. Check out branch
+        uses: actions/checkout@v3
+
+      - name: 2. Create .env file for CI
+        run: |
+          pip3 install dump-env
+          dump-env \
+            -t .env.template \
+            -p 'CI_' > .env
+
+      - name: 3. Install npm
+        run: |
+          sudo apt install nodejs npm -y
+          npm ci 
+
+      - name: 4. Build dist folder
+        run: |
+          npm run build
+
+      - name: Copy dist to dev folder on server
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ vars.SSH_DEPLOY_HOST }}
+          username: ${{ secrets.SSH_DEPLOY_USER }}
+          key: ${{ secrets.SSH_DEPLOY_KEY }}
+          overwrite: true
+          source: 'dist'
+          target: '~/frontend'
