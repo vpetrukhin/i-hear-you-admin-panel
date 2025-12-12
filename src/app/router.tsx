@@ -6,6 +6,7 @@ import {
 import { MATERIAL_PAGE_ROUTE, MaterialPage } from "@/pages/MaterialPage";
 import { createBrowserRouter, Navigate } from "react-router";
 import { ProtectedRoute } from "./ProtectedRoute";
+import { BOT_SETTINGS_PAGE_ROUTE, BotSettingsPage } from "@/pages/BotSettingsPage";
 
 export const router = createBrowserRouter([
   {
@@ -28,4 +29,8 @@ export const router = createBrowserRouter([
     path: LOGIN_PAGE_ROUTE,
     element: <LoginPage />,
   },
+  {
+    path: BOT_SETTINGS_PAGE_ROUTE,
+    element: <BotSettingsPage />,
+  }
 ]);

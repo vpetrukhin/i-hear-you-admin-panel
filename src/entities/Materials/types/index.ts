@@ -50,3 +50,18 @@ export interface CreateMaterialDTO {
   categories: number[];
   topics: number[];
 }
+
+// NOTE: Возможно нужно изменить контракт на беке
+export interface CreateCategoryDTO {
+  slug?: string,
+  name: string,
+  is_active?: boolean,
+  path?: number
+}
+
+export interface CreateTopicDTO {
+  slug?: string,
+  name: string,
+  is_active?: boolean,
+  path?: number
+}

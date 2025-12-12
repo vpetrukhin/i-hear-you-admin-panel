@@ -6,15 +6,16 @@ import type { ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
+  blockGap?: number
 }
 
-export const PageContent = ({ children }: Props) => {
+export const PageContent = ({ children, blockGap = 0 }: Props) => {
   return (
-      <Box sx={{ display: "flex", flexDirection:"column", width: "100%"}}>
-        {/* <SidebarHeader /> */}
-        <Box sx={{ display: "flex", width: "100%", p: "32px", backgroundColor: "#FAF9FD", height: "100%" }}>
-            {children}
-        </Box>
+    <Box sx={{ display: "flex", flexDirection: "column", width: "100%", backgroundColor: "#FAF9FD" }}>
+      {/* <SidebarHeader /> */}
+      <Box sx={{ display: "flex", width: "100%", p: "32px", gap: blockGap }}>
+        {children}
       </Box>
+    </Box>
   );
 };

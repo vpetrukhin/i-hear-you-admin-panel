@@ -63,8 +63,8 @@ export const Sidebar = () => {
             px: "12px",
           }}
         >
-          <SidebarLink to="/scenarios" Icon={SettingsIcon}>
-            Настройки бота(в разработке)
+          <SidebarLink to="/settings" Icon={SettingsIcon}>
+            Настройки бота
           </SidebarLink>
           <SidebarLink to="/materials" Icon={UploadIcon}>
             Управление контентом
