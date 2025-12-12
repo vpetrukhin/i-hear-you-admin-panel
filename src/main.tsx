@@ -5,7 +5,8 @@ import App from "./app/App.tsx";
 import { enableMocking, type Handlers } from "./shared/lib/mocks";
 import { authHandlers } from "./features/auth";
 import { getCategoriesHandlers, getMaterialHandlers, getTopicHandlers } from "./entities/Materials";
-import { getPathHandlers } from "./pages/BotSettingsPage/index.ts";
+import { getPathHandlers } from "./pages/BotSettingsPage";
+import { getBotMessageApiHandlers } from "./shared/api/bomessagesApi";
 
 const handlers: Handlers = [
   ...authHandlers,
@@ -13,6 +14,7 @@ const handlers: Handlers = [
   ...getCategoriesHandlers(),
   ...getTopicHandlers(),
   ...getPathHandlers(),
+  ...getBotMessageApiHandlers(),
 ]
 
 enableMocking(handlers).then(() => {

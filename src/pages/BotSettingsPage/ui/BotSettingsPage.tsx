@@ -10,6 +10,7 @@ import { useCategoriesChange } from "../lib/useCategoriesChange"
 import { useTopicChange } from "../lib/useTopicsChange"
 import { usePathsQuery } from "../lib/usePathsQuery"
 import { usePathsChange } from "../lib/usePathsChange"
+import { BotNotificationForm } from "./BotNotificationForm"
 
 export const BotSettingsPage = () => {
   const categoriesQuery = useCategoriesList()
@@ -24,8 +25,8 @@ export const BotSettingsPage = () => {
   return (
     <Page>
       <Sidebar />
-      <PageContent>
-        <Block>
+      <PageContent blockGap={4}>
+        <Block sx={{ width: '70%' }}>
           <Typography
             variant="h2"
             align="left"
@@ -68,6 +69,7 @@ export const BotSettingsPage = () => {
             ]} />
           </Stack>
         </Block>
+        <BotNotificationForm />
       </PageContent>
     </Page>
 
