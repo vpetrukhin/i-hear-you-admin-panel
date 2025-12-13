@@ -31,7 +31,6 @@ import { Notification } from "@/shared/ui/Notification";
 import { FileUploader } from "react-drag-drop-files";
 import { UploadIcon } from "./UploadIcon";
 import type {
-  CreateMaterialDTO,
   MaterialCategoryType,
   MaterialTopicType,
 } from "@/entities/Materials/types";
@@ -59,7 +58,7 @@ export const MaterialsList = () => {
   const queryClient = useQueryClient();
   const { isOpen, openModal, closeModal } = useModal();
   const { isNotificationOpen, showNotification } = useNotification();
-  const [selectedFile, setSelecteFile] = useState<number>(0);
+  const [selectedFile, setSelecteFile] = useState<MaterialType | null>(null);
   const [formState, setFormState] = useState<CreateFormStateType>(
     defaultFormState,
   );
@@ -88,13 +87,16 @@ export const MaterialsList = () => {
     },
   });
 
-  const handleClickDelete = (id: number) => {
-    setSelecteFile(id);
+  const handleClickDelete = (file: MaterialType) => {
+    setSelecteFile(file);
     openModal();
   };
-
   const handleDelete = () => {
-    deleteMutation.mutate(selectedFile);
+    if (!selectedFile) {
+      return
+    }
+
+    deleteMutation.mutate(selectedFile?.id);
     closeModal();
     showNotification();
   };
@@ -119,26 +121,47 @@ export const MaterialsList = () => {
 
   const handleCreateSubmit = (ev: FormEvent) => {
     ev.preventDefault();
-    console.log(formState);
 
     const file = Array.isArray(formState.file)
       ? formState.file[0]
       : formState.file;
 
-    const createDto: CreateMaterialDTO = {
-      name: formState.name,
-      file: "",
-      file_type: file?.type ?? "",
-      categories: formState.category?.id ? [formState.category.id] : [],
-      topics: formState.topic?.id ? [formState.topic.id] : [],
-      paths: formState.paths,
-      is_active: false,
-    };
+    if (!file) {
+      return
+    }
 
-    console.log(createDto);
+    const formData = new FormData();
+
+    // файл
+    formData.append('file', file);
+
+    // простые поля
+    formData.append('name', formState.name);
+    formData.append('file_type', file.type || 'PDF');
+    formData.append('is_active', 'false');
+
+    // массивы / связи — как JSON
+    formData.append(
+      'categories',
+      JSON.stringify(
+        formState.category?.id ? [formState.category.id] : []
+      )
+    );
+
+    formData.append(
+      'topics',
+      JSON.stringify(
+        formState.topic?.id ? [formState.topic.id] : []
+      )
+    );
+
+    formData.append(
+      'paths',
+      JSON.stringify(formState.paths ?? [])
+    );
 
     // fileCreate
-    // createMutation.mutate(createDto)
+    createMutation.mutate(formData)
     //
     notification.showNotification();
     handleCreateModalClose();
@@ -398,7 +421,7 @@ export const MaterialsList = () => {
                       </IconButton>
                       <IconButton
                         aria-label="удалить"
-                        onClick={() => handleClickDelete(file.id)}
+                        onClick={() => handleClickDelete(file)}
                         sx={{
                           color: "#2B2735",
                           p: "0",
@@ -426,7 +449,7 @@ export const MaterialsList = () => {
         <ModalWrapper
           isOpen={isOpen}
           onClose={closeModal}
-          title="Удаление шага"
+          title="Удаление файла"
         >
           <Typography
             sx={{
@@ -437,8 +460,7 @@ export const MaterialsList = () => {
               mb: "44px",
             }}
           >
-            Вы уверены, что&nbsp;хотите удалить Шаг&nbsp;1 - Выбор контекста?
-            После удаления шаг больше не&nbsp;будет отображаться в&nbsp;боте
+            Вы уверены, что хотите удалить файл {selectedFile?.name}? После удаления файл больше не будет доступен в боте
           </Typography>
           <Box
             sx={{

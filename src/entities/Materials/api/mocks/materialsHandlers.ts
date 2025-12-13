@@ -1,6 +1,6 @@
 import type { Handlers } from "@/shared/lib/mocks";
 import { materials } from "@/shared/lib/mocks/mockData";
-import { http, HttpResponse } from "msw";
+import { delay, http, HttpResponse } from "msw";
 import { MATERIALS_API_URL_MAP } from "../urls";
 
 export const getMaterialHandlers = (withRefresh?: boolean): Handlers => [
@@ -14,5 +14,11 @@ export const getMaterialHandlers = (withRefresh?: boolean): Handlers => [
     const index: number = Number(info.params?.id) - 1
 
     return HttpResponse.json(materials[index])
+  }),
+  http.get(MATERIALS_API_URL_MAP.create, async () => {
+    // const createdFile = info.request.clone().blob()
+    await delay(2000)
+
+    return HttpResponse.json({ message: "created" })
   })
 ]
