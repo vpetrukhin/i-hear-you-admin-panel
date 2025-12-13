@@ -7,6 +7,10 @@ export async function enableMocking(handlers: Handlers) {
     return;
   }
 
+  if (!import.meta.env.VITE_API_ENABLE_MSW) {
+    return
+  }
+
   const { workerFabric } = await import("./browser");
 
   const worker = workerFabric(handlers)

@@ -2,7 +2,6 @@
 import { request } from "@/shared/api/axios";
 import type {
   CreateCategoryDTO,
-  CreateMaterialDTO,
   CreateTopicDTO,
   MaterialCategoryType,
   MaterialTopicType,
@@ -47,11 +46,11 @@ export const fileActive = async (
   return res.data;
 }
 
-export const createFile = async (dto: CreateMaterialDTO) => {
+export const createFile = async (dto: FormData) => {
   const res = await request.post<
     unknown,
     AxiosResponse<unknown>,
-    CreateMaterialDTO
+    FormData
   >(MATERIALS_API_URL_MAP.create, dto);
 
   return res.data;

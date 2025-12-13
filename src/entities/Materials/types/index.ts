@@ -43,7 +43,7 @@ export interface MaterialType {
 
 export interface CreateMaterialDTO {
   name: string;
-  file: string;
+  file: File;
   file_type: string;
   "is_active": false;
   paths: number[];
