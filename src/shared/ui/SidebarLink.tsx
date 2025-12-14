@@ -1,11 +1,13 @@
 import { NavLink } from "react-router";
-import { Box, type SvgIconProps } from "@mui/material";
+import { Box } from "@mui/material";
 import type { ReactNode } from "react";
+import type { IconElement } from "./icons/types";
+import { COLORS_TOKENS } from "./tokens";
 
 interface SidebarLinkProps {
   to: string;
   children: ReactNode;
-  Icon?: React.ElementType<SvgIconProps>;
+  Icon: IconElement
 }
 
 export const SidebarLink = ({ to, children, Icon }: SidebarLinkProps) => {
@@ -22,12 +24,11 @@ export const SidebarLink = ({ to, children, Icon }: SidebarLinkProps) => {
         fontSize: 16,
         lineHeight: "140%",
         fontWeight: "600",
-        color: isActive ? "#2B2735" : "#FFFFFF",
-        borderRadius: "8px",
-        backgroundColor: isActive ? "#D8FA91" : "transparent",
+        color: isActive ? COLORS_TOKENS.dark.primary : COLORS_TOKENS.light.primary, borderRadius: "8px",
+        backgroundColor: isActive ? COLORS_TOKENS.accent.light : "transparent",
       })}
     >
-      {Icon && <Icon sx={{ width: "24px", height: "24px" }} />}
+      {Icon && <Icon />}
       <Box component="span">{children}</Box>
     </NavLink>
   );

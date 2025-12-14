@@ -1,3 +1,10 @@
 export { EditIcon } from './EditIcon'
 export { TrashIcon } from './TrashIcon'
 export { PlusIcon } from './PlusIcon'
+export { HomeIcon } from './HomeIcon'
+export { SettingIcon } from './SettingIcon'
+export { SlidersIcon } from './SlidersIcon'
+export { LogoutIcon } from './LogoutIcon'
+export { ArrowUpIcon } from './ArrowUpIcon'
+
+export type { IconElement } from './types'

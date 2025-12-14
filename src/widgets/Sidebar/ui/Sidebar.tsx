@@ -1,11 +1,9 @@
 import { useAuthContext } from "@/features/auth";
 import { LOGIN_PAGE_ROUTE } from "@/pages/LoginPage";
 import { Box, Button, Stack, Typography } from "@mui/material";
-import SettingsIcon from "@mui/icons-material/Settings";
-import UploadIcon from "@mui/icons-material/Upload";
-import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router";
 import { SidebarLink } from "@/shared/ui/SidebarLink";
+import { HomeIcon, LogoutIcon, SettingIcon, SlidersIcon } from "@/shared/ui/icons";
 
 export const Sidebar = () => {
   const navigate = useNavigate();
@@ -63,10 +61,13 @@ export const Sidebar = () => {
             px: "12px",
           }}
         >
-          <SidebarLink to="/settings" Icon={SettingsIcon}>
+          <SidebarLink to="/statistics" Icon={HomeIcon}>
+            Главная
+          </SidebarLink>
+          <SidebarLink to="/settings" Icon={SettingIcon}>
             Настройки бота
           </SidebarLink>
-          <SidebarLink to="/materials" Icon={UploadIcon}>
+          <SidebarLink to="/materials" Icon={SlidersIcon}>
             Управление контентом
           </SidebarLink>
         </Stack>
@@ -84,7 +85,7 @@ export const Sidebar = () => {
           color: "#737476",
         }}
       >
-        <LogoutIcon sx={{ width: "24px", height: "24px" }} />
+        <LogoutIcon />
         <Box
           component="span"
           sx={{
