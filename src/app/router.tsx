@@ -7,11 +7,12 @@ import { MATERIAL_PAGE_ROUTE, MaterialPage } from "@/pages/MaterialPage";
 import { createBrowserRouter, Navigate } from "react-router";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { BOT_SETTINGS_PAGE_ROUTE, BotSettingsPage } from "@/pages/BotSettingsPage";
+import { STATISTICS_PAGE_ROUTE, StatisticsPage } from "@/pages/StatisticsPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to={MATERIAL_LIST_PAGE_ROUTE} />,
+    element: <Navigate to={STATISTICS_PAGE_ROUTE} />,
   },
   {
     path: MATERIAL_LIST_PAGE_ROUTE,
@@ -32,5 +33,9 @@ export const router = createBrowserRouter([
   {
     path: BOT_SETTINGS_PAGE_ROUTE,
     element: <BotSettingsPage />,
+  },
+  {
+    path: STATISTICS_PAGE_ROUTE,
+    element: <StatisticsPage />
   }
 ]);
