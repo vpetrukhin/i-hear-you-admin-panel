@@ -11,6 +11,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -26,7 +27,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useModal from "@/shared/hooks/useModal";
 import { ModalWrapper } from "@/shared/ui/ModalWrapper";
 import useNotification from "@/shared/hooks/useNotification";
-import { type FormEvent, useState } from "react";
+import { type ChangeEvent, type FormEvent, useState } from "react";
 import { Notification } from "@/shared/ui/Notification";
 import { FileUploader } from "react-drag-drop-files";
 import { UploadIcon } from "./UploadIcon";
@@ -39,6 +40,7 @@ import { CreateMaterialForm } from "./CreateMaterialForm";
 export interface CreateFormStateType {
   file: File | File[] | null;
   name: string;
+  fileLink: string;
   description: string;
   category: MaterialCategoryType | null;
   topic: MaterialTopicType | null;
@@ -47,6 +49,7 @@ export interface CreateFormStateType {
 
 const defaultFormState = {
   file: null,
+  fileLink: "",
   name: "",
   description: "",
   category: null,
@@ -57,6 +60,7 @@ const defaultFormState = {
 export const MaterialsList = () => {
   const queryClient = useQueryClient();
   const { isOpen, openModal, closeModal } = useModal();
+  const createFileModal = useModal()
   const { isNotificationOpen, showNotification } = useNotification();
   const [selectedFile, setSelecteFile] = useState<MaterialType | null>(null);
   const [formState, setFormState] = useState<CreateFormStateType>(
@@ -116,6 +120,7 @@ export const MaterialsList = () => {
   };
 
   const handleCreateModalClose = () => {
+    createFileModal.closeModal()
     setFormState(defaultFormState);
   };
 
@@ -126,18 +131,21 @@ export const MaterialsList = () => {
       ? formState.file[0]
       : formState.file;
 
-    if (!file) {
-      return
-    }
 
     const formData = new FormData();
 
     // файл
-    formData.append('file', file);
+    if (file) {
+      formData.append('file', file);
+      formData.append('file_type', file.type || 'PDF');
+    }
 
+    if (formState.fileLink) {
+      formData.append('external_url', formState.fileLink);
+      formData.append('file_type', 'LINK');
+    }
     // простые поля
     formData.append('name', formState.name);
-    formData.append('file_type', file.type || 'PDF');
     formData.append('is_active', 'false');
 
     // массивы / связи — как JSON
@@ -171,60 +179,41 @@ export const MaterialsList = () => {
     setFormState((prev) => ({ ...prev, ...newState }));
   };
 
+  const handleFileLinkChange = (ev: ChangeEvent<HTMLInputElement>) => {
+    changeFormState({ fileLink: ev.target.value });
+  };
+
   if (isLoading) return <CircularProgress />;
   if (error) return <Typography color="error">{error.message}</Typography>;
-
-  const isCreateFormModalOpen = Boolean(formState.file);
 
   return (
     <Stack sx={{ width: "100%" }} direction={"column"}>
       <Box sx={{ width: "100%", backgroundColor: "#FFFFFF", p: "20px" }}>
-        <Typography
-          align="left"
-          color="#2B2735"
-          variant="h1"
-          sx={{
-            mb: "24px",
-            fontSize: "24px",
-            fontWeight: "700",
-            lineHeight: "150%",
-          }}
-        >
-          Загрузка контента
-        </Typography>
-        <FileUploader
-          handleChange={handleFileUpload}
-          name="file"
-          types={["JPG"]}
-        >
-          <Box
+        <Stack flexDirection="row" justifyContent="space-between" sx={{
+          mb: "24px",
+        }}>
+          <Typography
+            align="left"
+            color="#2B2735"
+            variant="h1"
             sx={{
-              border: "1px dashed grey",
-              padding: "24px 0",
-              cursor: "pointer",
+              mb: "24px",
+              fontSize: "24px",
+              fontWeight: "700",
+              lineHeight: "150%",
             }}
           >
-            <Stack flexDirection="column" alignItems="center">
-              <UploadIcon width={40} height={40} />
-              <Stack direction="row" spacing={0.5}>
-                <Typography
-                  sx={{
-                    color: "#7751FF",
-                  }}
-                >
-                  Загрузите
-                </Typography>
-                <Typography>или перетащите файлы сюда</Typography>
-              </Stack>
-              <Typography color="textDisabled">
-                SVG, PNG, JPG or GIF (max. 3MB)
-              </Typography>
-            </Stack>
-          </Box>
-        </FileUploader>
+            Загрузка контента
+          </Typography>
+
+          <Button onClick={createFileModal.openModal} variant="contained" size="small" sx={{
+            backgroundColor: "#7751FF",
+          }}>Создать</Button>
+
+        </Stack>
 
         <ModalWrapper
-          isOpen={isCreateFormModalOpen}
+          isOpen={createFileModal.isOpen}
           onClose={handleCreateModalClose}
         >
           <Typography
@@ -240,16 +229,64 @@ export const MaterialsList = () => {
               padding: "16px",
             }}
           >
-            <Typography variant="body1">
-              {Array.isArray(formState.file)
-                ? formState.file[0].name
-                : formState.file?.name}
-            </Typography>
-            <Typography>
-              {Array.isArray(formState.file)
-                ? formState.file[0].size
-                : formState.file?.size}кб • Загрузка завершена
-            </Typography>
+            {formState.file ? (
+              <>
+                <Typography variant="body1">
+                  {Array.isArray(formState.file)
+                    ? formState.file[0].name
+                    : formState.file?.name}
+                </Typography>
+                <Typography>
+                  {Array.isArray(formState.file)
+                    ? formState.file[0].size
+                    : formState.file?.size}кб • Загрузка завершена
+                </Typography>
+              </>
+            ) : !formState.fileLink && (
+              <FileUploader
+                handleChange={handleFileUpload}
+                name="file"
+                types={["JPG", "SVG", "PNG", "GIF"]}
+              >
+                <Box
+                  sx={{
+                    border: "1px dashed grey",
+                    padding: "24px 0",
+                    cursor: "pointer",
+                  }}
+                >
+                  <Stack flexDirection="column" alignItems="center">
+                    <UploadIcon width={40} height={40} />
+                    <Stack direction="row" spacing={0.5}>
+                      <Typography
+                        sx={{
+                          color: "#7751FF",
+                        }}
+                      >
+                        Загрузите
+                      </Typography>
+                      <Typography>или перетащите файлы сюда</Typography>
+                    </Stack>
+                    <Typography color="textDisabled">
+                      SVG, PNG, JPG or GIF (max. 3MB)
+                    </Typography>
+                  </Stack>
+                </Box>
+              </FileUploader>
+            )}
+
+            {!formState.file && !formState.fileLink && (
+              <Typography textAlign="center">или вы можете ввести ссылку на файл</Typography>
+            )}
+
+            {!formState.file && (
+              <TextField
+                variant="standard"
+                onChange={handleFileLinkChange}
+                label="Ссылка на файл"
+                value={formState.fileLink}
+              />
+            )}
           </Stack>
           <CreateMaterialForm
             isCreatePending={createMutation.isPending}
