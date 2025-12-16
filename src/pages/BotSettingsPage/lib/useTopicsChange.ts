@@ -1,6 +1,7 @@
 import { entityModel, topicsService, type CreateTopicDTO } from "@/entities/Materials"
 import type { MaterialTopicType } from "@/entities/Materials"
 import type { StepDataType } from "@/features/EditStep"
+import { getSlug } from "@/shared/lib/getSlug"
 import { useMutation } from "@tanstack/react-query"
 
 interface Props {
@@ -39,7 +40,8 @@ export const useTopicChange = ({ topics, refetch }: Props) => {
       await Promise.all(changed.map(variant => updateTopicMutation.mutateAsync({
         topicId: variant.id,
         dto: {
-          name: variant.value
+          name: variant.value,
+          slug: getSlug(variant.value),
         }
       })))
     }
@@ -47,6 +49,7 @@ export const useTopicChange = ({ topics, refetch }: Props) => {
     if (created?.length) {
       await Promise.all(created.map(variant => createTopicMutation.mutateAsync({
         name: variant.value,
+        slug: getSlug(variant.value),
       })))
     }
 

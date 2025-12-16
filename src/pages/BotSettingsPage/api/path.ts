@@ -10,17 +10,17 @@ export interface PathType {
 }
 
 export interface CreatePathDTO {
-  slug?: string,
+  slug: string,
   name: string,
   is_active?: boolean,
   path?: number
 }
 
 export const PATH_API_URL_MAP = {
-  list: () => '/api/path',
-  create: () => '/api/path',
-  update: (id: string) => `/api/path/${id}`,
-  delete: (id: string) => `/api/path/${id}`,
+  list: () => '/api/path/',
+  create: () => '/api/path/',
+  update: (id: string) => `/api/path/${id}/`,
+  delete: (id: string) => `/api/path/${id}/`,
 }
 
 export const getPathsList = async () => {

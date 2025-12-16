@@ -53,14 +53,14 @@ export interface CreateMaterialDTO {
 
 // NOTE: Возможно нужно изменить контракт на беке
 export interface CreateCategoryDTO {
-  slug?: string,
+  slug: string,
   name: string,
   is_active?: boolean,
   path?: number
 }
 
 export interface CreateTopicDTO {
-  slug?: string,
+  slug: string,
   name: string,
   is_active?: boolean,
   path?: number
