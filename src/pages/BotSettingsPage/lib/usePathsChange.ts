@@ -2,6 +2,7 @@ import { entityModel } from "@/entities/Materials"
 import type { StepDataType } from "@/features/EditStep"
 import { useMutation } from "@tanstack/react-query"
 import { createPath, deletePath, updatePath, type CreatePathDTO, type PathType } from "../api/path"
+import { getSlug } from "@/shared/lib/getSlug"
 
 interface Props {
   paths?: PathType[]
@@ -39,7 +40,8 @@ export const usePathsChange = ({ paths, refetch }: Props) => {
       await Promise.all(changed.map(variant => updatePathMutation.mutateAsync({
         pathId: variant.id,
         dto: {
-          name: variant.value
+          name: variant.value,
+          slug: getSlug(variant.value),
         }
       })))
     }
@@ -47,6 +49,7 @@ export const usePathsChange = ({ paths, refetch }: Props) => {
     if (created?.length) {
       await Promise.all(created.map(variant => createPathMutation.mutateAsync({
         name: variant.value,
+        slug: getSlug(variant.value),
       })))
     }
 

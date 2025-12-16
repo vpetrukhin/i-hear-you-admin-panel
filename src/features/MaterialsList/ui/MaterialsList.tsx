@@ -36,6 +36,7 @@ import type {
   MaterialTopicType,
 } from "@/entities/Materials/types";
 import { CreateMaterialForm } from "./CreateMaterialForm";
+import { mapMimeToFileType } from "@/shared/lib/mapMimeToFileType";
 
 export interface CreateFormStateType {
   file: File | File[] | null;
@@ -137,7 +138,7 @@ export const MaterialsList = () => {
     // файл
     if (file) {
       formData.append('file', file);
-      formData.append('file_type', file.type || 'PDF');
+      formData.append('file_type', mapMimeToFileType(file.type));
     }
 
     if (formState.fileLink) {

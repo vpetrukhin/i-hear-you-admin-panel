@@ -2,6 +2,7 @@ import { categoriesService, entityModel, type CreateCategoryDTO } from "@/entiti
 import type { MaterialCategoryType } from "@/entities/Materials/types"
 import type { StepDataType } from "@/features/EditStep"
 import { useMutation } from "@tanstack/react-query"
+import { getSlug } from '@/shared/lib/getSlug';
 
 interface Props {
   categories?: MaterialCategoryType[]
@@ -39,7 +40,8 @@ export const useCategoriesChange = ({ categories, refetch }: Props) => {
       await Promise.all(changed.map(variant => updateCategoryMutation.mutateAsync({
         categoryId: variant.id,
         dto: {
-          name: variant.value
+          name: variant.value,
+          slug: getSlug(variant.value)
         }
       })))
     }
@@ -47,6 +49,7 @@ export const useCategoriesChange = ({ categories, refetch }: Props) => {
     if (created?.length) {
       await Promise.all(created.map(variant => createCategoryMutation.mutateAsync({
         name: variant.value,
+        slug: getSlug(variant.value)
       })))
     }
 
