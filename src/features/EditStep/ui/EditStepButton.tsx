@@ -11,10 +11,11 @@ interface Props {
   step: number
   stepData: StepDataType
   isSavePending?: boolean
+  isSaveError?: boolean
   onSave: (updateData: StepDataType) => Promise<void>
 }
 
-export const EditStepButton = ({ step, stepData, isSavePending, onSave }: Props) => {
+export const EditStepButton = ({ step, stepData, isSaveError, isSavePending, onSave }: Props) => {
   const stepNotification = useNotification()
   const modal = useModal()
 
@@ -130,6 +131,9 @@ export const EditStepButton = ({ step, stepData, isSavePending, onSave }: Props)
                   )
                 }}
               </Field>
+              {isSaveError &&
+                <Typography textAlign="right" color="error">При изменении шага произошла ошибка</Typography>
+              }
               <Stack direction="row" spacing={1.5} justifyContent="flex-end">
                 <Button onClick={handleCancel} size="large" color="secondary" variant="contained" sx={{
                   backgroundColor: '#2B2735'

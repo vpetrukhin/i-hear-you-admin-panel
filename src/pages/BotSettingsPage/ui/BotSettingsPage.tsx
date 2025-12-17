@@ -21,6 +21,7 @@ export const BotSettingsPage = () => {
   const { handleTopicsSave, isPending: isTopicStepPending } = useTopicChange({ topics: topicsQuery.data, refetch: topicsQuery.refetch })
   const { handlePathsSave, isPending: isPathStepPending } = usePathsChange({ paths: pathsQuery.data, refetch: pathsQuery.refetch })
 
+  const isSaveError = categoriesQuery.isError || topicsQuery.isError || pathsQuery.isError
 
   return (
     <Page>
@@ -38,7 +39,7 @@ export const BotSettingsPage = () => {
           >Сценарий</Typography>
           <Stack spacing={3}>
             <Step step={1} title='Выбор контекста' actions={[
-              <EditStepButton step={1} onSave={handlePathsSave} isSavePending={isPathStepPending} stepData={
+              <EditStepButton step={1} onSave={handlePathsSave} isSaveError={isSaveError} isSavePending={isPathStepPending} stepData={
                 getStepData({
                   name: 'Выбор контекста',
                   message: 'Добро пожаловать! Пожалуйста, выберите, с каким запросом Вы к нам пришли:',
@@ -50,7 +51,7 @@ export const BotSettingsPage = () => {
               } />
             ]} />
             <Step step={2} title='Выбор категории' actions={[
-              <EditStepButton step={2} onSave={handleCategoriesSave} isSavePending={isCategoryStepPending} stepData={
+              <EditStepButton step={2} onSave={handleCategoriesSave} isSaveError={isSaveError} isSavePending={isCategoryStepPending} stepData={
                 getStepData(
                   {
                     name: 'Выбор категории',
@@ -61,7 +62,7 @@ export const BotSettingsPage = () => {
               } />
             ]} />
             <Step step={3} title='Выбор темы' actions={[
-              <EditStepButton step={3} onSave={handleTopicsSave} isSavePending={isTopicStepPending} stepData={getStepData({
+              <EditStepButton step={3} onSave={handleTopicsSave} isSaveError={isSaveError} isSavePending={isTopicStepPending} stepData={getStepData({
                 name: 'Выбор темы',
                 message: 'Добро пожаловать! Пожалуйста, выберите, с каким запросом Вы к нам пришли:',
                 variants: topicsQuery.data?.map(getVariantFromTopic) ?? []
