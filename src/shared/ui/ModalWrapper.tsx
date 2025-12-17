@@ -41,7 +41,9 @@ export const ModalWrapper: React.FC<ModalProps> = ({
           width: "700px",
           p: "16px 24px 24px",
           display: "flex",
-          flexDirection: "column"
+          flexDirection: "column",
+          maxHeight: '90%',
+          overflowY: 'scroll',
         }}
       >
         {title && (
