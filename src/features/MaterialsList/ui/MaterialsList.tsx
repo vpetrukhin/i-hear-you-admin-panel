@@ -125,7 +125,7 @@ export const MaterialsList = () => {
     setFormState(defaultFormState);
   };
 
-  const handleCreateSubmit = (ev: FormEvent) => {
+  const handleCreateSubmit = async (ev: FormEvent) => {
     ev.preventDefault();
 
     const file = Array.isArray(formState.file)
@@ -153,14 +153,14 @@ export const MaterialsList = () => {
     formData.append(
       'categories',
       JSON.stringify(
-        formState.category?.id ? [formState.category.id] : []
+        formState.category?.id ? [formState.category] : []
       )
     );
 
     formData.append(
       'topics',
       JSON.stringify(
-        formState.topic?.id ? [formState.topic.id] : []
+        formState.topic?.id ? [formState.topic] : []
       )
     );
 
@@ -170,10 +170,15 @@ export const MaterialsList = () => {
     );
 
     // fileCreate
-    createMutation.mutate(formData)
-    //
-    notification.showNotification();
-    handleCreateModalClose();
+    await createMutation.mutateAsync(formData)
+
+    if (createMutation.isSuccess) {
+      notification.showNotification();
+      handleCreateModalClose();
+    }
+
+
+
   };
 
   const changeFormState = (newState: Partial<CreateFormStateType>) => {

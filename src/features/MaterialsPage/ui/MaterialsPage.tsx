@@ -35,7 +35,7 @@ export const MaterialsPage = ({ materialListPageRoute }: Props) => {
   const [checked, setChecked] = useState(false);
 
   const updateMutation = useMutation({
-    mutationFn: (id: number) => materialService.fileActive(id, checked),
+    mutationFn: ({ id }: { id: number }) => materialService.fileActive(id, checked),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["materials", id] });
     },
@@ -61,7 +61,7 @@ export const MaterialsPage = ({ materialListPageRoute }: Props) => {
     const { checked } = event.target;
     setChecked(checked);
 
-    updateMutation.mutate(Number(id));
+    updateMutation.mutate({ id: Number(id) });
   };
 
   if (!id) {
@@ -109,7 +109,7 @@ export const MaterialsPage = ({ materialListPageRoute }: Props) => {
                 control={
                   <Switch
                     color="success"
-                    checked={!!file.is_active}
+                    checked={file.is_active}
                     onChange={handleChange}
                   />
                 }

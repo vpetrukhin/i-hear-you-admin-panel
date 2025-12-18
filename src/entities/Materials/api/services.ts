@@ -22,7 +22,7 @@ export const listRequest = async (): Promise<MaterialType[]> => {
 export const deleteFile = async (
   id: number,
 ): Promise<MaterialType[]> => {
-  const link = `${MATERIALS_API_URL_MAP.list}/${id}`;
+  const link = MATERIALS_API_URL_MAP.file(String(id));
   const res = await request.delete<any>(link);
   return res.data;
 };
@@ -36,11 +36,10 @@ export const fileRequest = async (
 
 export const fileActive = async (
   id: number,
-  is_active: boolean
+  isActive: boolean,
 ): Promise<MaterialType> => {
-  const link = `${MATERIALS_API_URL_MAP.list}/${id}`;
-  const res = await request.patch<any>(link, {
-    is_active: is_active
+  const res = await request.patch<any>(MATERIALS_API_URL_MAP.file(String(id)), {
+    is_active: isActive,
   });
 
   return res.data;
@@ -48,8 +47,8 @@ export const fileActive = async (
 
 export const createFile = async (dto: FormData) => {
   const res = await request.post<
-    unknown,
-    AxiosResponse<unknown>,
+    MaterialType,
+    AxiosResponse<MaterialType>,
     FormData
   >(MATERIALS_API_URL_MAP.create, dto);
 
