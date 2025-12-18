@@ -22,7 +22,7 @@ export const listRequest = async (): Promise<MaterialType[]> => {
 export const deleteFile = async (
   id: number,
 ): Promise<MaterialType[]> => {
-  const link = `${MATERIALS_API_URL_MAP.list}/${id}`;
+  const link = MATERIALS_API_URL_MAP.file(String(id));
   const res = await request.delete<any>(link);
   return res.data;
 };
