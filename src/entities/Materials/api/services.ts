@@ -47,8 +47,8 @@ export const fileActive = async (
 
 export const createFile = async (dto: FormData) => {
   const res = await request.post<
-    unknown,
-    AxiosResponse<unknown>,
+    MaterialType,
+    AxiosResponse<MaterialType>,
     FormData
   >(MATERIALS_API_URL_MAP.create, dto);
 
