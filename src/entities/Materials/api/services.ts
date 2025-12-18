@@ -36,11 +36,10 @@ export const fileRequest = async (
 
 export const fileActive = async (
   id: number,
-  is_active: boolean
+  isActive: boolean,
 ): Promise<MaterialType> => {
-  const link = `${MATERIALS_API_URL_MAP.list}/${id}`;
-  const res = await request.patch<any>(link, {
-    is_active: is_active
+  const res = await request.patch<any>(MATERIALS_API_URL_MAP.file(String(id)), {
+    is_active: isActive,
   });
 
   return res.data;

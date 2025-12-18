@@ -153,14 +153,14 @@ export const MaterialsList = () => {
     formData.append(
       'categories',
       JSON.stringify(
-        formState.category?.id ? [formState.category.id] : []
+        formState.category?.id ? [formState.category] : []
       )
     );
 
     formData.append(
       'topics',
       JSON.stringify(
-        formState.topic?.id ? [formState.topic.id] : []
+        formState.topic?.id ? [formState.topic] : []
       )
     );
 
