@@ -48,6 +48,9 @@ export { useCategoriesList } from "./lib/useCatgoriesListQuery";
 export { useTopicsList } from "./lib/useTopicsList";
 export { useCreateMaterialMutation } from "./lib/useCreateMaterialMutation";
 export { PATHS_LIST } from "./config/const";
+export { materialQueryKeys } from "./config/queryKeys"
 export { getMaterialHandlers } from './api/mocks/materialsHandlers'
 export { getCategoriesHandlers } from './api/mocks/categoriesHandlers'
 export { getTopicHandlers } from './api/mocks/topicsHandlers'
+
+export { MaterialList } from './ui/MaterialsList'

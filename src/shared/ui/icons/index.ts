@@ -6,5 +6,6 @@ export { SettingIcon } from './SettingIcon'
 export { SlidersIcon } from './SlidersIcon'
 export { LogoutIcon } from './LogoutIcon'
 export { ArrowUpIcon } from './ArrowUpIcon'
+export { UploadIcon } from './UploadIcon'
 
 export type { IconElement } from './types'

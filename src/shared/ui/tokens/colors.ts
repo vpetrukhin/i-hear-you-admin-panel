@@ -16,5 +16,5 @@ export const COLORS_TOKENS = {
   system: {
     error: "#FF3333",
     success: "#00C89B",
-  }
+  },
 } as const

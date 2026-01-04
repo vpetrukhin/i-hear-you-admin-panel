@@ -1,7 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { materialService } from "..";
 
-export const useCreateMaterialMutation = () => {
+interface Props {
+  onError?: () => void
+}
+
+export const useCreateMaterialMutation = (params?: Props) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -12,5 +16,8 @@ export const useCreateMaterialMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["materials"] });
     },
+    onError: () => {
+      params?.onError?.()
+    }
   });
 };

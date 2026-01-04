@@ -15,10 +15,18 @@ export const getMaterialHandlers = (withRefresh?: boolean): Handlers => [
 
     return HttpResponse.json(materials[index])
   }),
-  http.get(MATERIALS_API_URL_MAP.create, async () => {
+  http.post(MATERIALS_API_URL_MAP.create, async () => {
     // const createdFile = info.request.clone().blob()
     await delay(2000)
 
+    // return HttpResponse.json({ message: "error" }, { status: 400 })
     return HttpResponse.json({ message: "created" })
-  })
+  }),
+  http.delete(MATERIALS_API_URL_MAP.file(':id'), async (info) => {
+    const index: number = Number(info.params?.id) - 1
+    await delay(2000)
+
+    // return HttpResponse.json({ message: "error" }, { status: 400 })
+    return HttpResponse.json(materials[index])
+  }),
 ]

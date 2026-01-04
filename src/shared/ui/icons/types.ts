@@ -1,6 +1,6 @@
 import type { ElementType } from "react";
 
-export type IconSizeType = 'medium' | 'small';
+export type IconSizeType = 'medium' | 'small' | 'large';
 
 export interface BaseIconProps {
   size?: IconSizeType
