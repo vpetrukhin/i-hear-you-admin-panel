@@ -16,12 +16,12 @@ import {
   materialService,
   type MaterialType,
 } from "@/entities/Materials";
-import { formatDate } from "../../MaterialsList/utils";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { useState, type ChangeEvent } from 'react';
+import { formatDate } from "@/shared/lib/formatDate";
 
 interface Props {
   materialListPageRoute: string;

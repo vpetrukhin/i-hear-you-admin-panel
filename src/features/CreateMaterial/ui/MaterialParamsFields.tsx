@@ -1,35 +1,18 @@
-import {
-  PATHS_LIST,
-  useCategoriesList,
-  useTopicsList,
-} from "@/entities/Materials";
-import { type ChangeEvent, type FormEvent } from "react";
-import type { CreateFormStateType } from "./MaterialsList";
-import {
-  Box,
-  Button,
-  Checkbox,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { PATHS_LIST, useCategoriesList, useTopicsList } from "@/entities/Materials";
+import type { CreateFormStateType } from "../model/types";
+import type { ChangeEvent } from "react";
+import { Checkbox, List, ListItem, ListItemButton, ListItemIcon, ListItemText, MenuItem, Stack, TextField, Typography } from "@mui/material";
 
 interface Props {
   formState: CreateFormStateType;
   isCreatePending?: boolean;
   changeFormState: (newState: Partial<CreateFormStateType>) => void;
-  onCancel: () => void;
-  onSubmit: (ev: FormEvent) => void;
+  // onCancel: () => void;
+  // onSubmit: (ev: FormEvent) => void;
 }
 
-export const CreateMaterialForm = (
-  { formState, changeFormState, onCancel, onSubmit }: Props,
+export const MaterialParamsFields = (
+  { formState, changeFormState }: Props,
 ) => {
   const { data: categoriesList } = useCategoriesList();
   const { data: topicsList } = useTopicsList();
@@ -68,7 +51,7 @@ export const CreateMaterialForm = (
   };
 
   return (
-    <Box component="form" onSubmit={onSubmit} noValidate>
+    <>
       <Stack spacing={5}>
         <TextField
           variant="standard"
@@ -163,27 +146,6 @@ export const CreateMaterialForm = (
       <Typography variant="body1" color="textDisabled">
         Выберите один или оба варианта
       </Typography>
-      <Stack
-        direction="row"
-        justifyContent="end"
-        spacing={2}
-        sx={{ width: "100%", pt: "24px" }}
-      >
-        <Button
-          variant="contained"
-          onClick={onCancel}
-          sx={{ backgroundColor: "#2B2735" }}
-        >
-          Отмена
-        </Button>
-        <Button
-          variant="contained"
-          sx={{ backgroundColor: "#7751FF" }}
-          type="submit"
-        >
-          Сохранить
-        </Button>
-      </Stack>
-    </Box>
+    </>
   );
 };

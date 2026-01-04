@@ -1,13 +1,12 @@
-interface Props {
-  width: number;
-  height: number;
-}
+import { ICON_SIZE_MAP } from "./const"
+import type { BaseIconProps } from "./types"
 
-export const UploadIcon = ({ width, height }: Props) => {
+export const UploadIcon = ({ size = 'medium' }: BaseIconProps) => {
+  const iconSize = ICON_SIZE_MAP[size]
   return (
     <svg
-      width={width}
-      height={height}
+      width={iconSize}
+      height={iconSize}
       viewBox="0 0 40 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -34,5 +33,5 @@ export const UploadIcon = ({ width, height }: Props) => {
         stroke-linejoin="round"
       />
     </svg>
-  );
-};
+  )
+}
