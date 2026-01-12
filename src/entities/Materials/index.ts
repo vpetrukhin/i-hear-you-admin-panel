@@ -54,3 +54,4 @@ export { getCategoriesHandlers } from './api/mocks/categoriesHandlers'
 export { getTopicHandlers } from './api/mocks/topicsHandlers'
 
 export { MaterialList } from './ui/MaterialsList'
+export { MaterialForm } from './ui/MaterialForm'
