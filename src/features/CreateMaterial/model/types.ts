@@ -9,7 +9,8 @@ export interface CreateFormStateType {
   name: string;
   fileLink: string;
   description: string;
-  category: MaterialCategoryType | null;
-  topic: MaterialTopicType | null;
+  category: MaterialCategoryType[] | null;
+  topic: MaterialTopicType[] | null;
   paths: PathType[];
+  isActive: boolean;
 }

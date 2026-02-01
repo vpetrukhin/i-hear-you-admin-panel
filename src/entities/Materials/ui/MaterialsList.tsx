@@ -18,7 +18,13 @@ import { useState, type ReactNode } from "react";
 import useModal from "@/shared/hooks/useModal";
 import { ModalWrapper } from "@/shared/ui/ModalWrapper";
 import { MaterialForm } from "./MaterialForm";
-import type { MaterialFormFields } from "../model/material";
+import {
+  getMaterialFormData,
+  type MaterialFormFields,
+} from "../model/material";
+import { useUpdateMaterialMutation } from "../lib/useUpdateMaterialMutation";
+import { Notification } from "@/shared/ui/Notification";
+import useNotification from "@/shared/hooks/useNotification";
 
 interface Props {
   renderDeleteButton: (material: MaterialType) => ReactNode;
@@ -35,6 +41,8 @@ const columns = [
 export const MaterialList = ({ renderDeleteButton }: Props) => {
   const materialPreviewModal = useModal();
   const { materials, error, isLoading } = useMaterialsList();
+  const updateMaterialMutation = useUpdateMaterialMutation();
+  const successNotification = useNotification();
 
   const [materialData, setMaterialData] = useState<MaterialType | undefined>();
 
@@ -58,11 +66,28 @@ export const MaterialList = ({ renderDeleteButton }: Props) => {
     setMaterialData(undefined);
   };
 
-  const handleMaterialPreviewSubmit = (materialData: MaterialFormFields) => {
-    console.log(materialData);
-    // save material data to server
-    materialPreviewModal.closeModal();
-    setMaterialData(undefined);
+  const handleMaterialPreviewSubmit = async (
+    materialData: MaterialFormFields,
+  ) => {
+    const formData = getMaterialFormData()
+      .setName(materialData.name)
+      .setDescription(materialData.description)
+      .setCategory(materialData.category)
+      .setPaths(materialData.paths)
+      .setTopic(materialData.topic)
+      .setIsActive(materialData.isActive)
+      .build();
+
+    await updateMaterialMutation.mutateAsync({
+      id: materialData.id,
+      formData,
+    });
+
+    if (!updateMaterialMutation.isError) {
+      materialPreviewModal.closeModal();
+      successNotification.showNotification();
+      setMaterialData(undefined);
+    }
   };
 
   return (
@@ -235,11 +260,18 @@ export const MaterialList = ({ renderDeleteButton }: Props) => {
         isOpen={materialPreviewModal.isOpen}
       >
         <MaterialForm
+          isPendingSubmit={updateMaterialMutation.isPending}
           materialData={materialData}
           onCancel={handleMaterialPreviewCancel}
           onSubmit={handleMaterialPreviewSubmit}
         />
       </ModalWrapper>
+
+      <Notification
+        isOpen={successNotification.isNotificationOpen}
+        text={"Материал обновлен"}
+        type={"success"}
+      />
     </>
   );
 };

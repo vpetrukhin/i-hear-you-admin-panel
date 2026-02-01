@@ -2,6 +2,7 @@ import type { MaterialType } from "../types";
 import type { MaterialFormFields } from "./material";
 
 const defaultFormState: MaterialFormFields = {
+  id: "",
   file: null,
   fileLink: "",
   name: "",
@@ -11,6 +12,7 @@ const defaultFormState: MaterialFormFields = {
   paths: [],
   fileName: "",
   fileSize: "",
+  isActive: false,
 };
 
 export const getMaterialFormDefaultState = (
@@ -21,6 +23,7 @@ export const getMaterialFormDefaultState = (
   }
 
   return {
+    id: material.id,
     file: null,
     fileName: material.file?.split("/").pop() || "",
     fileSize: material.file_size_human,
@@ -30,5 +33,6 @@ export const getMaterialFormDefaultState = (
     category: material.categories,
     topic: material.topics,
     paths: material.paths,
+    isActive: material.is_active,
   };
 };

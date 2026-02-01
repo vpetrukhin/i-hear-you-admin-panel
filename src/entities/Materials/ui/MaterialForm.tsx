@@ -24,6 +24,7 @@ import { useCategoriesList } from "../lib/useCatgoriesListQuery";
 import { useTopicsList } from "../lib/useTopicsList";
 import { usePathsList } from "../lib/usePathList";
 import { getMaterialFormDefaultState } from "../model/getMaterialFormDefaultState";
+import { Switch } from "@/shared/ui/Switch";
 
 interface Props {
   isNew?: boolean;
@@ -84,6 +85,17 @@ export const MaterialForm = ({
         {title}
       </Typography>
       <Stack spacing={2.5}>
+        {!isNew && (
+          <form.Field name="isActive">
+            {(isActiveField) => (
+              <Switch
+                label="Активный"
+                value={isActiveField.state.value}
+                onChange={isActiveField.handleChange}
+              />
+            )}
+          </form.Field>
+        )}
         <form.Field name="file">
           {(fileField) => (
             <>
