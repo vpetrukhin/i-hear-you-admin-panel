@@ -2,7 +2,7 @@ import type { MaterialType } from "../types";
 import type { MaterialFormFields } from "./material";
 
 const defaultFormState: MaterialFormFields = {
-  id: "",
+  id: 0,
   file: null,
   fileLink: "",
   name: "",
