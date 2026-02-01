@@ -15,7 +15,13 @@ import {
 } from "./api/services";
 import { getEntityIds } from "./model/category.ts";
 
-export { type MaterialType, type CreateCategoryDTO, type MaterialCategoryType, type MaterialTopicType, type CreateTopicDTO } from "./types";
+export {
+  type MaterialType,
+  type CreateCategoryDTO,
+  type MaterialCategoryType,
+  type MaterialTopicType,
+  type CreateTopicDTO,
+} from "./types";
 export { MATERIALS_FRONT_URL_MAP } from "./api/urls";
 
 export const materialService = {
@@ -35,7 +41,7 @@ export const categoriesService = {
 
 export const entityModel = {
   getEntityIds,
-}
+};
 
 export const topicsService = {
   getTopicsList,
@@ -48,9 +54,12 @@ export { useCategoriesList } from "./lib/useCatgoriesListQuery";
 export { useTopicsList } from "./lib/useTopicsList";
 export { useCreateMaterialMutation } from "./lib/useCreateMaterialMutation";
 export { PATHS_LIST } from "./config/const";
-export { materialQueryKeys } from "./config/queryKeys"
-export { getMaterialHandlers } from './api/mocks/materialsHandlers'
-export { getCategoriesHandlers } from './api/mocks/categoriesHandlers'
-export { getTopicHandlers } from './api/mocks/topicsHandlers'
+export { materialQueryKeys } from "./config/queryKeys";
+export { getMaterialHandlers } from "./api/mocks/materialsHandlers";
+export { getCategoriesHandlers } from "./api/mocks/categoriesHandlers";
+export { getTopicHandlers } from "./api/mocks/topicsHandlers";
 
-export { MaterialList } from './ui/MaterialsList'
+export { getMaterialFormData } from "./model/material";
+
+export { MaterialList } from "./ui/MaterialsList";
+export { MaterialForm } from "./ui/MaterialForm";

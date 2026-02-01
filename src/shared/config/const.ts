@@ -1,6 +1,3 @@
-/**
- * @deprecated
- */
 export const FILE_UPLOADER_TYPES = {
   IMAGE: ['JPG', 'JPEG', 'PNG', 'GIF', 'SVG', 'WEBP'],
   VIDEO: ['MP4', 'WEBM', 'AVI', 'MOV'],
@@ -9,7 +6,4 @@ export const FILE_UPLOADER_TYPES = {
   PDF: ['PDF'],
 } as const;
 
-/**
- * @deprecated
- */
 export const ALL_FILE_UPLOADER_TYPES = Object.values(FILE_UPLOADER_TYPES).flat();

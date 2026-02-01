@@ -1,4 +1,7 @@
 import type { MaterialType } from "@/entities/Materials";
+import { categoryMockList } from "@/entities/Materials/api/mocks/mockData/category";
+import { materialTopics } from "@/entities/Materials/api/mocks/mockData/topic";
+import { pathsMock } from "@/shared/api/pathApi/mock/mockData/paths";
 
 export const materials: MaterialType[] = [
   {
@@ -9,14 +12,9 @@ export const materials: MaterialType[] = [
     file_type: "pdf",
     is_active: true,
     created_at: "2025-01-10T12:30:00Z",
-    paths: {
-      preview: "/previews/algorithms.png",
-      download: "/files/algorithms.pdf"
-    },
-    categories: [
-    ],
-    topics: [
-    ]
+    paths: pathsMock,
+    category: categoryMockList[0],
+    topic: materialTopics[0],
   },
   {
     id: 2,
@@ -26,16 +24,9 @@ export const materials: MaterialType[] = [
     file_type: "pptx",
     is_active: true,
     created_at: "2025-02-01T09:00:00Z",
-    paths: {
-      preview: "/previews/ml_basics.png",
-      download: "/files/ml_basics.pptx"
-    },
-    categories: [
-    ],
-    topics: [
-      { id: "21", name: "Регрессия" },
-      { id: "22", name: "Классификация" }
-    ]
+    paths: pathsMock,
+    category: categoryMockList[0],
+    topic: materialTopics[0],
   },
   {
     id: 3,
@@ -45,16 +36,8 @@ export const materials: MaterialType[] = [
     file_type: "docx",
     is_active: false,
     created_at: "2024-12-20T16:45:00Z",
-    paths: {
-      preview: "/previews/web_intro.png",
-      download: "/files/web_intro.docx"
-    },
-    categories: [
-    ],
-    topics: [
-      { id: "31", name: "HTML" },
-      { id: "32", name: "CSS" },
-      { id: "33", name: "JavaScript" }
-    ]
-  }
+    paths: pathsMock,
+    category: categoryMockList[0],
+    topic: materialTopics[0],
+  },
 ];
