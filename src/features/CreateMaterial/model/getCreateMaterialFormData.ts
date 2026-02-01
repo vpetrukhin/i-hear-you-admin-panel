@@ -6,40 +6,39 @@ export const getCreateMaterialFormData = (formState: CreateFormStateType) => {
     ? formState.file[0]
     : formState.file;
 
-
   const formData = new FormData();
 
   if (file) {
-    formData.append('file', file);
-    formData.append('file_type', mapMimeToFileType(file.type));
+    formData.append("file", file);
+    formData.append("file_type", mapMimeToFileType(file.type));
   }
 
   if (formState.fileLink) {
-    formData.append('external_url', formState.fileLink);
-    formData.append('file_type', 'LINK');
+    formData.append("external_url", formState.fileLink);
+    formData.append("file_type", "LINK");
   }
 
-  formData.append('name', formState.name);
-  formData.append('is_active', 'false');
+  formData.append("name", formState.name);
+  formData.append("is_active", "false");
 
-  formData.append(
-    'categories',
-    JSON.stringify(
-      formState.category?.id ? [formState.category] : []
-    )
-  );
+  if (formState.category?.id) {
+    formData.append("categories", formState.category.id.toString());
+  }
 
-  formData.append(
-    'topics',
-    JSON.stringify(
-      formState.topic?.id ? [formState.topic] : []
-    )
-  );
+  if (formState.topic?.id) {
+    formData.append("topics", formState.topic.id.toString());
+  }
 
-  formData.append(
-    'paths',
-    JSON.stringify(formState.paths ?? [])
-  );
+  if (formState.paths) {
+    formState.paths.forEach((path) => {
+      formData.append("paths", path.id.toString());
+    });
+  }
 
-  return formData
-}
+  // formData.append(
+  //   "paths",
+  //   JSON.stringify(formState.paths.map((path) => Number(path.id)) ?? []),
+  // );
+
+  return formData;
+};

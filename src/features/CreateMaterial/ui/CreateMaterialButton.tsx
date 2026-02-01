@@ -42,12 +42,6 @@ export const CreateMaterialButton = () => {
       </Button>
 
       <ModalWrapper isOpen={modal.isOpen} onClose={modal.closeModal}>
-        {/* <CreateMaterialForm */}
-        {/*   isCreateMaterialPending={createMaterialMutation.isPending} */}
-        {/*   isCreateMaterialError={createMaterialMutation.isError} */}
-        {/*   createMaterial={handleCreateMaterial} */}
-        {/*   onCancelCreate={modal.closeModal} */}
-        {/* /> */}
         <MaterialForm
           isNew
           onCancel={modal.closeModal}

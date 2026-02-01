@@ -23,6 +23,7 @@ import { Form } from "@/shared/ui/Form";
 import { useCategoriesList } from "../lib/useCatgoriesListQuery";
 import { useTopicsList } from "../lib/useTopicsList";
 import { usePathsList } from "../lib/usePathList";
+import { getMaterialFormDefaultState } from "../model/getMaterialFormDefaultState";
 
 interface Props {
   isNew?: boolean;
@@ -32,18 +33,8 @@ interface Props {
   materialData?: MaterialType;
 }
 
-const defaultFormState: MaterialFormFields = {
-  file: null,
-  fileLink: "",
-  name: "",
-  description: "",
-  category: null,
-  topic: null,
-  paths: [],
-};
-
 export const MaterialForm = ({
-  // materialData,
+  materialData,
   isNew,
   isPendingSubmit,
   onCancel,
@@ -54,7 +45,7 @@ export const MaterialForm = ({
   const { data: pathsList } = usePathsList();
 
   const form = useForm({
-    defaultValues: defaultFormState,
+    defaultValues: getMaterialFormDefaultState(materialData),
     onSubmit: ({ value }) => {
       onSubmit(value);
     },
@@ -70,6 +61,11 @@ export const MaterialForm = ({
   const title = isNew ? "Добавление файла" : "Просмотр файла";
   const fileLinkValue = useStore(form.store, (state) => state.values.fileLink);
   const fileValue = useStore(form.store, (state) => state.values.file);
+  const fileName = useStore(form.store, (state) => state.values.fileName);
+  const fileSize = useStore(form.store, (state) => state.values.fileSize);
+
+  const getIsFilePreview = (fileValue: File | File[] | null) =>
+    (isNew && fileValue) || (fileName && fileSize);
 
   return (
     <Form
@@ -91,21 +87,18 @@ export const MaterialForm = ({
         <form.Field name="file">
           {(fileField) => (
             <>
-              {fileField.state.value ? (
+              {getIsFilePreview(fileField.state.value) && (
                 <MaterialFilePreview
-                  material={{
-                    name: Array.isArray(fileField.state.value)
-                      ? "File"
-                      : fileField.state.value.name,
-                    size: Array.isArray(fileField.state.value)
-                      ? 0
-                      : fileField.state.value.size,
-                  }}
+                  file={fileField.state.value}
+                  fileName={fileName}
+                  fileSize={fileSize}
                   onResetFile={() => {
                     fileField.handleChange(null);
                   }}
                 />
-              ) : (
+              )}
+
+              {isNew && !fileField.state.value && (
                 <FileUploader
                   handleChange={(file: File | File[]) => {
                     fileField.handleChange(file);
@@ -146,13 +139,13 @@ export const MaterialForm = ({
         <form.Field name="fileLink">
           {(linkField) => (
             <>
-              {!fileValue && !linkField.state.value && (
+              {isNew && !fileValue && !linkField.state.value && (
                 <Typography textAlign="center">
                   или вы можете ввести ссылку на файл
                 </Typography>
               )}
 
-              {!fileValue && (
+              {((isNew && !fileValue) || linkField.state.value) && (
                 <TextField
                   variant="standard"
                   label="Ссылка на файл"
@@ -194,12 +187,14 @@ export const MaterialForm = ({
                 variant="standard"
                 label="Категория"
                 sx={{ width: "100%" }}
-                value={field.state.value?.id ?? ""}
+                value={field.state.value?.[0]?.id ?? ""}
                 onChange={(e) => {
                   const category = categoriesList?.find(
                     (item) => item.id === Number(e.target.value),
                   );
-                  field.handleChange(category ?? null);
+                  if (category) {
+                    field.handleChange([category]);
+                  }
                 }}
               >
                 {categoriesList?.map((option) => (
@@ -218,12 +213,14 @@ export const MaterialForm = ({
                 variant="standard"
                 label="Тема (необязательно)"
                 sx={{ width: "100%" }}
-                value={field.state.value?.id ?? ""}
+                value={field.state.value?.[0]?.id ?? ""}
                 onChange={(e) => {
                   const topic = topicsList?.find(
                     (item) => item.id === Number(e.target.value),
                   );
-                  field.handleChange(topic ?? null);
+                  if (topic) {
+                    field.handleChange([topic]);
+                  }
                 }}
               >
                 {topicsList?.map((option) => (
@@ -242,7 +239,10 @@ export const MaterialForm = ({
         {(field) => (
           <List sx={{ width: "100%", maxWidth: 360 }}>
             {pathsList?.map((value) => {
-              const checked = field.state.value.includes(value.id);
+              const checked =
+                field.state.value.findIndex(
+                  (fieldValue) => fieldValue.id === value.id,
+                ) !== -1;
 
               return (
                 <ListItem key={value.id} disablePadding>
@@ -251,10 +251,12 @@ export const MaterialForm = ({
                     onClick={() => {
                       if (checked) {
                         field.handleChange(
-                          field.state.value.filter((id) => id !== value.id),
+                          field.state.value.filter(
+                            (item) => item.id !== value.id,
+                          ),
                         );
                       } else {
-                        field.handleChange([...field.state.value, value.id]);
+                        field.handleChange([...field.state.value, value]);
                       }
                     }}
                   >

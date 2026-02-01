@@ -3,14 +3,34 @@ import { COLORS_TOKENS } from "@/shared/ui/tokens";
 import { Button, Stack, Typography } from "@mui/material";
 
 interface Props {
-  material: {
-    name: string;
-    size: number;
-  };
+  file: File | File[] | null;
+  fileName: string;
+  fileSize: string;
   onResetFile?: () => void;
 }
 
-export const MaterialFilePreview = ({ material, onResetFile }: Props) => {
+const getNameFromFile = (file: File | File[] | null) => {
+  if (!file) return "";
+  if (Array.isArray(file)) return;
+  return file.name;
+};
+
+const getSizeFromFile = (file: File | File[] | null) => {
+  if (!file) return "";
+  if (Array.isArray(file)) return;
+  return file.size + "кб";
+};
+
+export const MaterialFilePreview = ({
+  fileName,
+  fileSize,
+  file,
+  onResetFile,
+}: Props) => {
+  const isLocalFile = file !== null;
+  const name = isLocalFile ? getNameFromFile(file) : fileName;
+  const size = isLocalFile ? getSizeFromFile(file) : fileSize;
+
   return (
     <Block variant="secondary">
       <Stack flexDirection="row" justifyContent="space-between">
@@ -21,7 +41,7 @@ export const MaterialFilePreview = ({ material, onResetFile }: Props) => {
               fontWeight: 500,
             }}
           >
-            {material.name}
+            {name}
           </Typography>
           <Typography
             sx={{
@@ -30,10 +50,10 @@ export const MaterialFilePreview = ({ material, onResetFile }: Props) => {
               color: "rgba(0, 0, 0, 0.6)",
             }}
           >
-            {material.size}кб
+            {size}
           </Typography>
         </Stack>
-        {onResetFile && (
+        {isLocalFile && onResetFile && (
           <Button
             variant="contained"
             size="small"

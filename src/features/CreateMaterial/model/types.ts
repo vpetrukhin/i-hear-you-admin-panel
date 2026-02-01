@@ -1,4 +1,8 @@
-import type { MaterialCategoryType, MaterialTopicType } from "@/entities/Materials";
+import type {
+  MaterialCategoryType,
+  MaterialTopicType,
+} from "@/entities/Materials";
+import type { PathType } from "@/shared/api/pathApi";
 
 export interface CreateFormStateType {
   file: File | File[] | null;
@@ -7,5 +11,5 @@ export interface CreateFormStateType {
   description: string;
   category: MaterialCategoryType | null;
   topic: MaterialTopicType | null;
-  paths: number[];
+  paths: PathType[];
 }
